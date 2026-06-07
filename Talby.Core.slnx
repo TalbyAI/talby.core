@@ -18,5 +18,7 @@
         <File Path="README.md" />
     </Folder>
     <Folder Name="/test/">
+        <Project Path="test/Talby.Core.Validation.UnitTests/Talby.Core.Validation.UnitTests.csproj" />
     </Folder>
+    <Project Path="Talby.Core.Validation/Talby.Core.Validation.csproj" />
 </Solution>
