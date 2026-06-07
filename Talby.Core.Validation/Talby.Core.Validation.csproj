@@ -1,2 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<Compile Remove="Resources.Designer.cs" />
+		<EmbeddedResource Update="Resources.resx">
+			<Generator>MSBuild:Compile</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<StronglyTypedFileName>Resources.Designer.cs</StronglyTypedFileName>
+			<StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+			<StronglyTypedNamespace>Talby.Core.Validation</StronglyTypedNamespace>
+			<StronglyTypedClassName>Resources</StronglyTypedClassName>
+			<PublicClass>false</PublicClass>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>
