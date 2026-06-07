@@ -1,12 +1,5 @@
 {
   "servers": {
-    "aspire": {
-      "command": "aspire",
-      "args": [
-        "agent",
-        "mcp"
-      ]
-    },
     "context-mode": {
       "command": "context-mode"
     },

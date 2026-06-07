@@ -31,14 +31,9 @@ public sealed class TrimValidator : ValueValidator
         [NotNullWhen(false)] out ValidationFailure? failure
     )
     {
-        if (context.ValidationTarget is string value)
-        {
-            validatedValue = charsToTrim is null ? value.Trim() : value.Trim(charsToTrim);
-            failure = null;
-            return true;
-        }
+        var value = (string)context.ValidationTarget!;
 
-        validatedValue = null;
+        validatedValue = charsToTrim is null ? value.Trim() : value.Trim(charsToTrim);
         failure = null;
         return true;
     }

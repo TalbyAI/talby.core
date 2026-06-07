@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Talby.Core.Validation;
 
 namespace Talby.Core.Validation.UnitTests;
@@ -64,33 +63,4 @@ public sealed class TrimValidatorTests
         Assert.Same(target, failure.AttemptedValue);
         Assert.Equal(ValidationPath.Root, failure.Path);
     }
-
-    // Scenario: Given a non-string target, When TryValidate is invoked directly, Then it returns success without trimming.
-    [Fact]
-    public void TrimValidator_TryValidate_Returns_success_for_non_string_targets()
-    {
-        var sut = TrimValidator.Instance;
-        var target = new object();
-        var isValid = TrimValidatorAccessors.TryValidate(
-            sut,
-            new ValidationContext(target),
-            out var validatedValue,
-            out var failure
-        );
-
-        Assert.True(isValid);
-        Assert.Null(validatedValue);
-        Assert.Null(failure);
-    }
-}
-
-file static class TrimValidatorAccessors
-{
-    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "TryValidate")]
-    public static extern bool TryValidate(
-        TrimValidator instance,
-        IValidationContext context,
-        out object? validatedValue,
-        out ValidationFailure? failure
-    );
 }
