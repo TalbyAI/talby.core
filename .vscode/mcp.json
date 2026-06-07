@@ -3,6 +3,13 @@
     "context-mode": {
       "command": "context-mode"
     },
+    "engram": {
+      "args": [
+        "mcp",
+        "--tools=agent"
+      ],
+      "command": "engram"
+    },
     "gitnexus": {
       "type": "stdio",
       "command": "gitnexus",
