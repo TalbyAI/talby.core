@@ -1,0 +1,21 @@
+{
+  "servers": {
+    "aspire": {
+      "command": "aspire",
+      "args": [
+        "agent",
+        "mcp"
+      ]
+    },
+    "context-mode": {
+      "command": "context-mode"
+    },
+    "gitnexus": {
+      "type": "stdio",
+      "command": "gitnexus",
+      "args": [
+        "mcp"
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+# Normalize the main tracked source and config files across platforms.
+*.cs text eol=lf
+*.csproj text eol=lf
+*.slnx text eol=lf
+*.json text eol=lf
+*.editorconfig text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+
+# Treat compiled outputs as binary if they are ever introduced to source control.
+*.dll binary
+*.exe binary
+*.pdb binary

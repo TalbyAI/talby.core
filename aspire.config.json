@@ -1,0 +1,6 @@
+{
+  "appHost": {
+    "language": "csharp",
+    "path": "Talby.Core.AppHost/Talby.Core.AppHost.csproj"
+  }
+}

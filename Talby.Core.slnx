@@ -1,0 +1,22 @@
+<Solution>
+    <Folder Name="/Solution Items/">
+        <File Path=".csharpierignore" />
+        <File Path=".csharpierrc.json" />
+        <File Path=".editorconfig" />
+        <File Path=".gitattributes" />
+        <File Path=".gitignore" />
+        <File Path="AGENTS.md" />
+        <File Path="aspire.config.json" />
+        <File Path="azure-pipelines.yml" />
+        <File Path="CLAUDE.md" />
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Packages.props" />
+        <File Path="global.json" />
+        <File Path="justfile" />
+        <File Path="nuget.config" />
+        <File Path="opencode.jsonc" />
+        <File Path="README.md" />
+    </Folder>
+    <Folder Name="/test/">
+    </Folder>
+</Solution>

@@ -1,0 +1,30 @@
+trigger:
+- main
+
+pr:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  BuildConfiguration: Release
+
+steps:
+- task: UseDotNet@2
+  displayName: Use .NET SDK 10
+  inputs:
+    packageType: sdk
+    version: 10.0.x
+
+- script: dotnet tool restore
+  displayName: Restore local dotnet tools
+
+- script: dotnet restore Talby.Core.slnx
+  displayName: Restore solution
+
+- script: dotnet build Talby.Core.slnx --configuration $(BuildConfiguration) --no-restore
+  displayName: Build solution
+
+- script: dotnet csharpier check .
+  displayName: Check formatting
