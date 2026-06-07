@@ -10,7 +10,7 @@ public sealed class IsNotNullValidatorTests
     {
         var target = new object();
         var sut = IsNotNullValidator.Instance;
-        var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
+        var result = await sut.ValidateAsync(new ValidationContext(target));
 
         Assert.Same(IsNotNullValidator.Instance, sut);
         Assert.True(result.IsValid);
@@ -24,7 +24,7 @@ public sealed class IsNotNullValidatorTests
     public async Task IsNotNullValidator_ValidateAsync_Returns_failure_for_null_targets()
     {
         var sut = IsNotNullValidator.Instance;
-        var result = await sut.ValidateAsync(new ValidationContext(null), CancellationToken.None);
+        var result = await sut.ValidateAsync(new ValidationContext(null));
 
         var failure = Assert.Single(result.Errors);
 

@@ -18,6 +18,20 @@ public sealed class TrimValidatorTests
         Assert.Empty(result.Errors);
     }
 
+    // Scenario: Given a string with tabs and line breaks, When ValidateAsync runs, Then it trims the value and returns success.
+    [Fact]
+    public async Task TrimValidator_ValidateAsync_Trims_tabs_and_line_breaks_by_default()
+    {
+        var sut = TrimValidator.Instance;
+        var context = new ValidationContext("\t\nhello\r\n");
+
+        var result = await sut.ValidateAsync(context, CancellationToken.None);
+
+        Assert.True(result.IsValid);
+        Assert.Equal("hello", result.ResultValue);
+        Assert.Empty(result.Errors);
+    }
+
     // Scenario: Given null trim characters, When ValidateAsync runs, Then it trims surrounding whitespace by default.
     [Fact]
     public async Task TrimValidator_ValidateAsync_Trims_surrounding_whitespace_when_trim_characters_are_null()
