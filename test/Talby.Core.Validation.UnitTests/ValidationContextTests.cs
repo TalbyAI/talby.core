@@ -59,7 +59,11 @@ public sealed class ValidationContextTests
     public void ValidationContext_Constructor_with_parent_rejects_a_root_path()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
-            new ValidationContext(new ValidationContext("parent-target"), ValidationPath.Root, "target")
+            new ValidationContext(
+                new ValidationContext("parent-target"),
+                ValidationPath.Root,
+                "target"
+            )
         );
 
         Assert.Equal("path", exception.ParamName);

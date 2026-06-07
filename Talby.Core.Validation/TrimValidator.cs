@@ -13,7 +13,14 @@ public sealed class TrimValidator : ValueValidator
 
     public TrimValidator(params IEnumerable<char>? charsToTrim)
     {
-        this.charsToTrim = charsToTrim is null ? null : charsToTrim.ToArray();
+        if (charsToTrim?.ToArray() is var arr && arr is null or { Length: 0 })
+        {
+            this.charsToTrim = null;
+        }
+        else
+        {
+            this.charsToTrim = arr;
+        }
     }
 
     private readonly char[]? charsToTrim;
