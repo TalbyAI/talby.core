@@ -10,7 +10,10 @@ This plan turns the spec and design into an ordered implementation slice for the
 ## Tasks
 
 1. [x] Add `GenerateDiscriminatedUnionAttribute.cs` to `Talby.Core.SourceGenerators` and emit the attribute through post-initialization source so consuming projects can use the marker without a runtime dependency.
-2. [ ] Replace `TalbyCoreIncrementalGenerator` with a real incremental pipeline in `DiscriminatedUnionGenerator.cs` that discovers annotated roots, walks nested types, and classifies valid cases by direct or indirect inheritance.
+2. [x] Consolidate `Talby.Core.SourceGenerators/DiscriminatedUnionGenerator.cs` into a real incremental pipeline.
+   - [x] [sequential] Wire the syntax provider so it discovers only annotated root type declarations and projects each one into a per-root model. Spec coverage: marker and discovery, one generated file per union root.
+   - [x] [sequential] Traverse nested type declarations in source order and classify each candidate as direct or indirect inheritance from the annotated root while keeping invalid nested types out of the valid-case set. Spec coverage: marker and discovery, invalid nested partials, deterministic ordering.
+   - [x] [sequential] Feed the classified root model into the source-output stage so later generation can emit one file per root and report the zero-valid-cases diagnostic only when no valid cases remain. Spec coverage: invalid nested partials, one generated file per union root.
 3. [ ] Emit the generated union surface with deterministic source-order output, XML documentation for every generated type and member, `IsXxx` members for the full union tree, leaf-only `Match` helpers, and defensive `InvalidOperationException` fallbacks.
 4. [ ] Update `Talby.Core.Validation/ValidationPath.cs` to annotate the root with `GenerateDiscriminatedUnion`, remove the handwritten generated region, and keep the root/case model as the canonical example input.
 5. [ ] Add `test/Talby.Core.SourceGenerators.UnitTests/DiscriminatedUnionGeneratorTests.cs` covering marker emission, `ValidationPath` output parity, indirect inheritance, invalid nested types, one-file-per-root behavior, deterministic ordering, and XML docs.

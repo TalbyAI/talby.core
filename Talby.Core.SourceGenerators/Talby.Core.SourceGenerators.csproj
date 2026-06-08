@@ -6,7 +6,7 @@
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <PackageType>Analyzer</PackageType>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-    <NoWarn>$(NoWarn);RS1041</NoWarn>
+    <NoWarn>$(NoWarn);RS1041;RS2007;RS2008</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
