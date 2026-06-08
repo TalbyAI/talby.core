@@ -353,7 +353,7 @@ When launching `sdd-apply`, always include the resolved `delivery_strategy`, `ch
 
 ## Model Assignments
 
-Read this table at session start (or before first delegation), cache it for the session, and pass the mapped alias in every Agent tool call via the `model` parameter. If a phase is missing, use the `default` row. If you lack access to the assigned model, substitute `sonnet` and continue.
+Read this table at session start (or before first delegation), cache it for the session, and pass the mapped alias in every Agent tool call via the `model` parameter. If a phase is missing, use the `default` row. If you lack access to the assigned model, substitute `GPT-5.4 mini` and continue.
 
 The Claude Code session model is controlled by Claude Code itself; Gentle AI does not configure the main orchestrator model. This table applies only to Agent tool calls for SDD phase sub-agents and general delegation.
 
@@ -361,15 +361,15 @@ The Claude Code session model is controlled by Claude Code itself; Gentle AI doe
 
 | Phase       | Default Model | Reason                                     |
 | ----------- | ------------- | ------------------------------------------ |
-| sdd-explore | sonnet        | Reads code, structural - not architectural |
-| sdd-propose | opus          | Architectural decisions                    |
-| sdd-spec    | sonnet        | Structured writing                         |
-| sdd-design  | opus          | Architecture decisions                     |
-| sdd-tasks   | sonnet        | Mechanical breakdown                       |
-| sdd-apply   | sonnet        | Implementation                             |
-| sdd-verify  | sonnet        | Validation against spec                    |
-| sdd-archive | haiku         | Copy and close                             |
-| default     | sonnet        | Non-SDD general delegation                 |
+| sdd-explore | GPT-5.4 mini | Reads code, structural - not architectural |
+| sdd-propose | GPT-5.4 mini | Architectural decisions                    |
+| sdd-spec    | GPT-5.4 mini | Structured writing                         |
+| sdd-design  | GPT-5.4 mini | Architecture decisions                     |
+| sdd-tasks   | GPT-5.4 mini | Mechanical breakdown                       |
+| sdd-apply   | GPT-5.4 mini | Implementation                             |
+| sdd-verify  | GPT-5.4 mini | Validation against spec                    |
+| sdd-archive | GPT-5.4 mini | Copy and close                             |
+| default     | GPT-5.4 mini | Non-SDD general delegation                 |
 
 <!-- /gentle-ai:sdd-model-assignments -->
 

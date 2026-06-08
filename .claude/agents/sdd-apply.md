@@ -4,7 +4,7 @@ description: >
   Implement code changes from task definitions. Use when tasks are ready and implementation
   should begin. Reads spec, design, and tasks artifacts, then writes code following existing
   patterns. Marks tasks complete as it goes.
-model: sonnet
+model: GPT-5.4 mini
 tools: Read, Edit, Write, Glob, Grep, Bash, mcp__plugin_engram_engram__mem_search, mcp__plugin_engram_engram__mem_get_observation, mcp__plugin_engram_engram__mem_save, mcp__plugin_engram_engram__mem_update
 ---
 
