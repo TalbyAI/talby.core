@@ -101,8 +101,8 @@ public sealed class ValidationPathTests
         var root = ValidationPath.Root;
         var property = root.ForProperty("name");
         var index = root.ForIndex(1);
-        var unknown = new UnknownValidationPath();
-        var basePath = new ValidationPath("base-path");
+        var unknown = new UnknownValidationPath(ValidationPath.Root, "unknown");
+        var basePath = new UnknownValidationPath(ValidationPath.Root, "base-path");
 
         Assert.Equal(
             "root",
@@ -249,5 +249,9 @@ public sealed class ValidationPathTests
         Assert.True(unknownDefaultCalled);
     }
 
-    private sealed record UnknownValidationPath() : ValidationPath("unknown");
+    private sealed record UnknownValidationPath(ValidationPath Parent, string PathText)
+        : ValidationPath(Parent)
+    {
+        public override string Path => PathText;
+    }
 }

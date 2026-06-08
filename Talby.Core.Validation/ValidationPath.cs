@@ -2,21 +2,33 @@ using System.Text.RegularExpressions;
 
 namespace Talby.Core.Validation;
 
-// [DiscriminatedUnion]
-public partial record ValidationPath(string Path)
+// [GenerateDiscriminatedUnion]
+public abstract partial record ValidationPath
 {
+    public abstract string Path { get; }
+
     #region [ Cases ]
 
-    public partial record RootPath() : ValidationPath(RootPathString);
+    public record RootPath() : ValidationPath
+    {
+        public override string Path => RootPathString;
+    }
 
-    public abstract partial record ChildPath(ValidationPath Parent, string Path)
-        : ValidationPath(Path);
+    public abstract record ChildPath(ValidationPath Parent) : ValidationPath;
 
-    public partial record PropertyPath(ValidationPath Parent, string Property)
-        : ChildPath(Parent, $"{Parent.Path}.{Property}");
+    public record PropertyPath(ValidationPath Parent, string Property) : ChildPath(Parent)
+    {
+        private readonly Lazy<string> _path = new(() => $"{Parent.Path}.{Property}");
 
-    public partial record IndexPath(ValidationPath Parent, int Index)
-        : ChildPath(Parent, $"{Parent.Path}[{Index}]");
+        public override string Path => _path.Value;
+    }
+
+    public record IndexPath(ValidationPath Parent, int Index) : ChildPath(Parent)
+    {
+        private readonly Lazy<string> _path = new(() => $"{Parent.Path}[{Index}]");
+
+        public override string Path => _path.Value;
+    }
 
     #endregion [ Cases ]
 
