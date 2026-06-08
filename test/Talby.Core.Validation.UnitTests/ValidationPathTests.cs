@@ -30,6 +30,19 @@ public sealed class ValidationPathTests
         Assert.True(rootActionCalled);
     }
 
+    // Scenario: return the formatted path string from ToString for each validation path case.
+    [Fact]
+    public void ValidationPath_ToString_returns_the_formatted_path_for_all_cases()
+    {
+        var root = ValidationPath.Root;
+        var property = root.ForProperty("display_name");
+        var index = root.ForIndex(2);
+
+        Assert.Equal(root.Path, root.ToString());
+        Assert.Equal(property.Path, property.ToString());
+        Assert.Equal(index.Path, index.ToString());
+    }
+
     // Scenario: trim valid property names and create property paths from the root.
     [Fact]
     public void ValidationPath_ForProperty_trims_the_property_name_and_creates_a_property_path()

@@ -14,11 +14,6 @@ public abstract partial record ValidationPath
     /// </summary>
     public abstract string Path { get; }
 
-    /// <summary>
-    /// Returns the formatted path string.
-    /// </summary>
-    public override string ToString() => Path;
-
     #region [ Cases ]
 
     /// <summary>
@@ -29,7 +24,9 @@ public abstract partial record ValidationPath
         /// <inheritdoc />
         public override string Path => RootPathString;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the formatted path string.
+        /// </summary>
         public override string ToString() => Path;
     }
 
@@ -46,7 +43,9 @@ public abstract partial record ValidationPath
         /// <inheritdoc />
         public override string Path => $"{Parent.Path}.{Property}";
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the formatted path string.
+        /// </summary>
         public override string ToString() => Path;
     }
 
@@ -58,7 +57,9 @@ public abstract partial record ValidationPath
         /// <inheritdoc />
         public override string Path => $"{Parent.Path}[{Index}]";
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the formatted path string.
+        /// </summary>
         public override string ToString() => Path;
     }
 
