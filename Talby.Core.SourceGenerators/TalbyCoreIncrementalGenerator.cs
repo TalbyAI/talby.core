@@ -7,8 +7,12 @@ public sealed class TalbyCoreIncrementalGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var pipeline = context.CompilationProvider;
-
-        context.RegisterSourceOutput(pipeline, static (_, _) => { });
+        context.RegisterPostInitializationOutput(static initializationContext =>
+        {
+            initializationContext.AddSource(
+                GenerateDiscriminatedUnionAttribute.HintName,
+                GenerateDiscriminatedUnionAttribute.Source
+            );
+        });
     }
 }
