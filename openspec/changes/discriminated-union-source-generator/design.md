@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Replace the current no-op incremental generator with a symbol-driven discriminated-union generator that first emits the `GenerateDiscriminatedUnion` marker attribute as post-initialization source, then recognizes that marker on a root type, walks nested types in source order, and classifies union cases by direct or indirect inheritance from that root. The generated surface replaces the handwritten union region in `Talby.Core.Validation/ValidationPath.cs` while keeping `ValidationPath` as the canonical behavioral reference. The source-generator project already has the correct analyzer-package shape, so `Talby.Core.SourceGenerators.csproj` stays unchanged.
+Replace the current no-op incremental generator with a symbol-driven discriminated-union generator that first emits the `GenerateDiscriminatedUnion` marker attribute as post-initialization source, then recognizes that marker on a root type, walks nested types in source order, and classifies union cases by direct or indirect inheritance from that root. The generated surface replaces the handwritten union region in `Talby.Core.Validation/ValidationPath.cs` while keeping `ValidationPath` as the canonical behavioral reference. `Match` dispatch remains leaf-only, so abstract or concrete grouping nodes surface through `IsXxx` but do not get `Match` arms. The source-generator project already has the correct analyzer-package shape, so `Talby.Core.SourceGenerators.csproj` stays unchanged.
 
 ## Architecture Decisions
 
@@ -23,6 +23,12 @@ Replace the current no-op incremental generator with a symbol-driven discriminat
 **Choice**: Ignore nested types that do not inherit from the annotated root; if no valid cases remain, report a diagnostic and emit no file for that root.
 **Alternatives considered**: Failing the whole compilation; promoting any nested partial type.
 **Rationale**: This matches the spec’s explicit safety rule and prevents accidental promotion of non-cases.
+
+### Decision: Leaf-only Match dispatch
+
+**Choice**: Generate `Match<TResult>` and `Match` only for leaf cases, while intermediate or grouping nodes expose `IsXxx` and stay out of dispatch.
+**Alternatives considered**: Emitting `Match` arms for every node in the union tree.
+**Rationale**: Leaf-only dispatch keeps the API aligned with the existing `ValidationPath` contract and avoids treating grouping nodes as terminal values.
 
 ## Data Flow
 
@@ -51,14 +57,14 @@ Root syntax with marker -> incremental pipeline -> semantic root/case discovery 
 
 ## Interfaces / Contracts
 
-The generated root partial type exposes `IsXxx` for every discovered nested type, `Match<TResult>` and `Match` for leaf cases only, plus `MatchXxx<TResult>(TResult defaultValue, Func<Xxx, TResult> matchFunc)` and `MatchXxx(Action<Xxx> matchAction, Action? defaultAction = null)` helpers for each leaf case. Every generated type and member includes XML documentation comments. Unknown runtime types still throw `InvalidOperationException` in the exhaustive matchers.
+The generated root partial type exposes `IsXxx` for every discovered nested type, `Match<TResult>` and `Match` for leaf cases only, plus `MatchXxx<TResult>(TResult defaultValue, Func<Xxx, TResult> matchFunc)` and `MatchXxx(Action<Xxx> matchAction, Action? defaultAction = null)` helpers for each leaf case. Intermediate or grouping nodes are observable through `IsXxx` but are intentionally excluded from `Match` dispatch. Every generated type and member includes XML documentation comments. Unknown runtime types still throw `InvalidOperationException` in the exhaustive matchers.
 
 ## Testing Strategy
 
 | Layer         | What to Test           | Approach                                                                                                                                   |
 | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | Unit          | Generator output shape | Run the generator against a `ValidationPath`-style sample and assert the emitted members, docs, and one-file-per-root contract.            |
-| Unit          | Invalid nested policy  | Verify non-derived nested types are ignored when valid cases exist, and that zero valid cases produce a diagnostic with no generated file. |
+| Unit          | Invalid nested policy  | Verify non-derived nested types are ignored when valid cases exist, intermediate nodes stay out of Match dispatch, and zero valid cases produce a diagnostic with no generated file. |
 | Project shape | Analyzer packaging     | Keep the existing project-shape guardrails so the generator remains analyzer-only with no build output.                                    |
 
 ## Migration / Rollout

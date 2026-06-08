@@ -34,12 +34,14 @@ Add a source generator that turns an annotated root type into the same discrimin
 * A nested type MUST be treated as a case only when it inherits, directly or indirectly, from the annotated root.
 * Abstract or intermediate nested types MUST be recognized in the union tree and MUST expose `IsXxx` members.
 * Abstract or intermediate nested types MUST NOT appear in `Match<TResult>` or `Match` unless they are leaf cases.
+* Leaf-case dispatch for `Match<TResult>` and `Match` MUST exclude abstract or grouping nodes, including concrete intermediate cases that have descendants.
 
 ### Generated surface
 
 * The generated source MUST include XML documentation comments for every generated type and member.
 * The root partial type MUST expose `IsXxx` for every discovered nested type in the union tree.
 * The root partial type MUST expose `Match<TResult>` and `Match` overloads for the leaf cases only.
+* The generated `Match<TResult>` and `Match` overloads MUST not add arms for abstract or intermediate nodes; those nodes remain observable only through `IsXxx`.
 * The root partial type MUST expose `MatchXxx<TResult>(TResult defaultValue, Func<Xxx, TResult> matchFunc)` and `MatchXxx(Action<Xxx> matchAction, Action? defaultAction = null)` helpers for each leaf case.
 * The generated matchers MUST preserve the defensive unknown-type behavior shown by ValidationPath and throw `InvalidOperationException` for unmatched runtime types.
 * Generated ordering MUST be deterministic and MUST follow the source declaration order of the nested type tree, with ancestor or grouping types before their descendant leaf cases.
@@ -62,7 +64,7 @@ This change uses a conservative policy for nested types that are present under a
 ## Acceptance Scenarios
 
 1. Given a root annotated with `GenerateDiscriminatedUnion` and nested partial derived cases, when the generator runs, then the root receives `IsXxx` members for the union tree and match helpers for leaf cases only.
-2. Given `ValidationPath` with `RootPath`, `ChildPath`, `PropertyPath`, and `IndexPath`, when the generator runs, then the generated surface matches the current manual region's behavior and naming.
+2. Given `ValidationPath` with `RootPath`, `ChildPath`, `PropertyPath`, and `IndexPath`, when the generator runs, then the generated surface matches the current manual region's behavior and naming, and `Match` dispatch stays limited to leaf cases while `IsXxx` covers the intermediate grouping case.
 3. Given a nested partial that inherits indirectly from the annotated root, when the generator runs, then that type is included as a case.
 4. Given a nested partial under the annotated root that does not inherit from the root, when the generator runs, then it is ignored for matching; valid cases still generate, and zero valid cases produce a diagnostic instead of a file.
 5. Given two annotated roots, when the generator runs, then each root gets its own generated file and independent union surface.
