@@ -81,6 +81,27 @@ public sealed class ValidationPathTests
         Assert.True(indexPath.IsIndexPath);
     }
 
+    // Scenario: clone property and index paths with with-expressions and recompute the path from the updated values.
+    [Fact]
+    public void ValidationPath_With_expressions_recompute_the_path_after_cloning()
+    {
+        var propertyPath = Assert.IsType<ValidationPath.PropertyPath>(
+            ValidationPath.Root.ForProperty("name")
+        );
+        var updatedPropertyPath = propertyPath with { Property = "display_name" };
+
+        Assert.Equal("$.name", propertyPath.Path);
+        Assert.Equal("$.display_name", updatedPropertyPath.Path);
+        Assert.Same(propertyPath.Parent, updatedPropertyPath.Parent);
+
+        var indexPath = Assert.IsType<ValidationPath.IndexPath>(ValidationPath.Root.ForIndex(1));
+        var updatedIndexPath = indexPath with { Index = 2 };
+
+        Assert.Equal("$[1]", indexPath.Path);
+        Assert.Equal("$[2]", updatedIndexPath.Path);
+        Assert.Same(indexPath.Parent, updatedIndexPath.Parent);
+    }
+
     // Scenario: reject negative indexes before creating index paths.
     [Theory]
     [InlineData(-1)]
