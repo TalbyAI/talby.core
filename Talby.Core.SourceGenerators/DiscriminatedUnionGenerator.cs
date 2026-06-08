@@ -25,6 +25,15 @@ public sealed class DiscriminatedUnionGenerator : IIncrementalGenerator
         isEnabledByDefault: true
     );
 
+    private static readonly DiagnosticDescriptor NestedRootDiagnostic = new(
+        id: "TCSG002",
+        title: "Annotated discriminated union root must not be nested",
+        messageFormat: "Type '{0}' is annotated with [GenerateDiscriminatedUnion] but is nested inside '{1}'",
+        category: "Talby.Core.SourceGenerators",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -50,6 +59,29 @@ public sealed class DiscriminatedUnionGenerator : IIncrementalGenerator
             annotatedRoots,
             static (sourceProductionContext, rootModel) =>
             {
+                if (rootModel.RootSymbol.ContainingType is not null)
+                {
+                    var location =
+                        rootModel.RootSymbol.Locations.FirstOrDefault(location =>
+                            location.IsInSource
+                        ) ?? Location.None;
+
+                    sourceProductionContext.ReportDiagnostic(
+                        Diagnostic.Create(
+                            NestedRootDiagnostic,
+                            location,
+                            rootModel.RootSymbol.ToDisplayString(
+                                SymbolDisplayFormat.MinimallyQualifiedFormat
+                            ),
+                            rootModel.RootSymbol.ContainingType.ToDisplayString(
+                                SymbolDisplayFormat.MinimallyQualifiedFormat
+                            )
+                        )
+                    );
+
+                    return;
+                }
+
                 if (rootModel.ValidCases.IsEmpty)
                 {
                     var location =

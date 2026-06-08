@@ -20,9 +20,9 @@ Replace the current no-op incremental generator with a symbol-driven discriminat
 
 ### Decision: Conservative invalid-nested policy
 
-**Choice**: Ignore nested types that do not inherit from the annotated root; if no valid cases remain, report a diagnostic and emit no file for that root.
-**Alternatives considered**: Failing the whole compilation; promoting any nested partial type.
-**Rationale**: This matches the spec’s explicit safety rule and prevents accidental promotion of non-cases.
+**Choice**: Ignore nested types that do not inherit from the annotated root; if no valid cases remain, report a diagnostic and emit no file for that root. Annotated roots that are themselves nested inside another type are rejected with a diagnostic and do not generate output.
+**Alternatives considered**: Failing the whole compilation; promoting any nested partial type; silently generating nested roots as top-level partials.
+**Rationale**: This matches the spec’s explicit safety rule, prevents accidental promotion of non-cases, and avoids emitting invalid top-level partials for nested roots.
 
 ### Decision: Leaf-only Match dispatch
 
@@ -64,7 +64,7 @@ The generated root partial type exposes `IsXxx` for every discovered nested type
 | Layer         | What to Test           | Approach                                                                                                                                   |
 | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | Unit          | Generator output shape | Run the generator against a `ValidationPath`-style sample and assert the emitted members, docs, and one-file-per-root contract.            |
-| Unit          | Invalid nested policy  | Verify non-derived nested types are ignored when valid cases exist, intermediate nodes stay out of Match dispatch, and zero valid cases produce a diagnostic with no generated file. |
+| Unit          | Invalid nested policy  | Verify non-derived nested types are ignored when valid cases exist, intermediate nodes stay out of Match dispatch, nested annotated roots produce an error, and zero valid cases produce a diagnostic with no generated file. |
 | Project shape | Analyzer packaging     | Keep the existing project-shape guardrails so the generator remains analyzer-only with no build output.                                    |
 
 ## Migration / Rollout

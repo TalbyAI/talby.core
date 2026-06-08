@@ -168,6 +168,19 @@ public sealed class DiscriminatedUnionGeneratorTests
         Assert.Contains(result.Diagnostics, diagnostic => diagnostic.Id == "TCSG001");
     }
 
+    // Scenario: Given an annotated root nested inside another type, when the generator runs, then it reports an error and emits no union file.
+    [Fact]
+    public void NestedAnnotatedRoots_AreRejected_WithADiagnostic()
+    {
+        var result = RunGenerator(
+            ("MarkerStub.cs", AttributeStubSource),
+            ("NestedRoot.cs", NestedAnnotatedRootSource)
+        );
+
+        Assert.Empty(GetUnionSources(result));
+        Assert.Contains(result.Diagnostics, diagnostic => diagnostic.Id == "TCSG002");
+    }
+
     // Scenario: Given two annotated roots, when the generator runs, then each root receives its own generated file.
     [Fact]
     public void TwoAnnotatedRoots_ProduceOneGeneratedFilePerRoot()
@@ -260,6 +273,22 @@ public sealed class DiscriminatedUnionGeneratorTests
             public abstract partial record Envelope
             {
                 public record InvalidCase;
+            }
+            """;
+
+    private static string NestedAnnotatedRootSource =>
+        """
+            using Talby.Core.SourceGenerators;
+
+            namespace Demo;
+
+            public sealed class Container
+            {
+                [global::Talby.Core.SourceGenerators.GenerateDiscriminatedUnion]
+                public abstract partial record NestedRoot
+                {
+                    public record Leaf : NestedRoot;
+                }
             }
             """;
 

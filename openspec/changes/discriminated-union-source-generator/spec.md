@@ -31,6 +31,7 @@ Add a source generator that turns an annotated root type into the same discrimin
 * The generator MUST provide `GenerateDiscriminatedUnion` as generated source from the source-generator project.
 * The generator MUST treat `GenerateDiscriminatedUnion` as a marker with no parameters.
 * The generator MUST discover annotated root types and inspect their nested types.
+* Annotated root types MUST be top-level declarations. A nested annotated root MUST report a diagnostic and MUST NOT emit a generated union file.
 * A nested type MUST be treated as a case only when it inherits, directly or indirectly, from the annotated root.
 * Abstract or intermediate nested types MUST be recognized in the union tree and MUST expose `IsXxx` members.
 * Abstract or intermediate nested types MUST NOT appear in `Match<TResult>` or `Match` unless they are leaf cases.
@@ -58,6 +59,7 @@ Add a source generator that turns an annotated root type into the same discrimin
 This change uses a conservative policy for nested types that are present under an annotated root but do not qualify as cases.
 
 * Such nested types MUST NOT be promoted to union cases.
+* Nested annotated roots MUST be rejected with a diagnostic and MUST NOT emit a generated union file.
 * If at least one valid case exists, generation MUST continue for the valid cases and ignore the invalid ones for the generated surface.
 * If an annotated root resolves to zero valid cases, the generator MUST report a diagnostic and MUST NOT emit a union file for that root.
 
@@ -67,8 +69,9 @@ This change uses a conservative policy for nested types that are present under a
 2. Given `ValidationPath` with `RootPath`, `ChildPath`, `PropertyPath`, and `IndexPath`, when the generator runs, then the generated surface matches the current manual region's behavior and naming, and `Match` dispatch stays limited to leaf cases while `IsXxx` covers the intermediate grouping case.
 3. Given a nested partial that inherits indirectly from the annotated root, when the generator runs, then that type is included as a case.
 4. Given a nested partial under the annotated root that does not inherit from the root, when the generator runs, then it is ignored for matching; valid cases still generate, and zero valid cases produce a diagnostic instead of a file.
-5. Given two annotated roots, when the generator runs, then each root gets its own generated file and independent union surface.
-6. Given any generated type or member, when the generator runs, then the emitted source includes XML documentation comments for that element.
+5. Given a nested annotated root, when the generator runs, then it reports a diagnostic and does not emit a generated union file for that root.
+6. Given two annotated roots, when the generator runs, then each root gets its own generated file and independent union surface.
+7. Given any generated type or member, when the generator runs, then the emitted source includes XML documentation comments for that element.
 
 ## Notes
 
