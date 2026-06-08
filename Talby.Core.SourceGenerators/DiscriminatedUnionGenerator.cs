@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -49,22 +50,31 @@ public sealed class DiscriminatedUnionGenerator : IIncrementalGenerator
             annotatedRoots,
             static (sourceProductionContext, rootModel) =>
             {
-                if (!rootModel.ValidCases.IsEmpty)
+                if (rootModel.ValidCases.IsEmpty)
                 {
+                    var location =
+                        rootModel.RootSymbol.Locations.FirstOrDefault(location =>
+                            location.IsInSource
+                        ) ?? Location.None;
+
+                    sourceProductionContext.ReportDiagnostic(
+                        Diagnostic.Create(
+                            NoValidCasesDiagnostic,
+                            location,
+                            rootModel.RootSymbol.ToDisplayString(
+                                SymbolDisplayFormat.MinimallyQualifiedFormat
+                            )
+                        )
+                    );
+
                     return;
                 }
 
-                var location =
-                    rootModel.RootSymbol.Locations.FirstOrDefault(location => location.IsInSource)
-                    ?? Location.None;
-
-                sourceProductionContext.ReportDiagnostic(
-                    Diagnostic.Create(
-                        NoValidCasesDiagnostic,
-                        location,
-                        rootModel.RootSymbol.ToDisplayString(
-                            SymbolDisplayFormat.MinimallyQualifiedFormat
-                        )
+                sourceProductionContext.AddSource(
+                    DiscriminatedUnionSourceWriter.GetHintName(rootModel.RootSymbol),
+                    SourceText.From(
+                        DiscriminatedUnionSourceWriter.Generate(rootModel),
+                        Encoding.UTF8
                     )
                 );
             }
@@ -229,8 +239,18 @@ internal sealed record DiscriminatedUnionRootModel(
         INamedTypeSymbol rootSymbol
     )
     {
-        var candidateDefinition = candidateSymbol.OriginalDefinition;
         var rootDefinition = rootSymbol.OriginalDefinition;
+
+        if (
+            candidateSymbol.BaseType is not null
+            && SymbolEqualityComparer.Default.Equals(
+                candidateSymbol.BaseType.OriginalDefinition,
+                rootDefinition
+            )
+        )
+        {
+            return DiscriminatedUnionInheritanceKind.Direct;
+        }
 
         for (
             var currentBaseType = candidateSymbol.BaseType;
@@ -248,12 +268,7 @@ internal sealed record DiscriminatedUnionRootModel(
                 continue;
             }
 
-            return SymbolEqualityComparer.Default.Equals(
-                currentBaseType.OriginalDefinition,
-                candidateDefinition
-            )
-                ? DiscriminatedUnionInheritanceKind.Direct
-                : DiscriminatedUnionInheritanceKind.Indirect;
+            return DiscriminatedUnionInheritanceKind.Indirect;
         }
 
         return null;
