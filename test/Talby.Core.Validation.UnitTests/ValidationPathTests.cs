@@ -4,7 +4,7 @@ namespace Talby.Core.Validation.UnitTests;
 
 public sealed class ValidationPathTests
 {
-    // Scenario: expose the built-in root path as the expected root token and type.
+    // Scenario: Given the generated root Match surface, when the root path is matched with the branch handler, then the root handler still wins.
     [Fact]
     public void ValidationPath_Root_exposes_the_expected_root_token_and_type()
     {
@@ -16,10 +16,7 @@ public sealed class ValidationPathTests
         Assert.False(result.IsChildPath);
         Assert.False(result.IsPropertyPath);
         Assert.False(result.IsIndexPath);
-        Assert.Equal(
-            "root",
-            result.Match(static _ => "root", static _ => "property", static _ => "index")
-        );
+        Assert.Equal("root", result.Match(static _ => "root", onChildPath: static _ => "child"));
         Assert.Equal("root", result.MatchRootPath("default", static _ => "root"));
         Assert.Equal("default", result.MatchPropertyPath("default", static _ => "property"));
         Assert.Equal("default", result.MatchIndexPath("default", static _ => "index"));
@@ -115,7 +112,7 @@ public sealed class ValidationPathTests
         Assert.Equal("index", exception.ParamName);
     }
 
-    // Scenario: dispatch every matcher branch and keep the defensive default path covered.
+    // Scenario: Given the generated Match overloads, when branch handlers are valid or invalid, then the expected dispatch and exceptions are preserved.
     [Fact]
     public void ValidationPath_Matchers_dispatch_known_cases_and_reject_unknown_derived_paths()
     {
@@ -127,7 +124,7 @@ public sealed class ValidationPathTests
 
         Assert.Equal(
             "root",
-            root.Match(static _ => "root", static _ => "property", static _ => "index")
+            root.Match(static _ => "root", onChildPath: static _ => "child")
         );
         Assert.Equal(
             "property",
@@ -137,13 +134,21 @@ public sealed class ValidationPathTests
             "index",
             index.Match(static _ => "root", static _ => "property", static _ => "index")
         );
+        Assert.Equal(
+            "child",
+            property.Match(static _ => "root", onChildPath: static _ => "child")
+        );
+        Assert.Equal(
+            "child",
+            index.Match(static _ => "root", onChildPath: static _ => "child")
+        );
         Assert.Throws<InvalidOperationException>(() =>
-            unknown.Match(static _ => "root", static _ => "property", static _ => "index")
+            unknown.Match(static _ => "root", onChildPath: static _ => "child")
         );
 
         Assert.Equal(
             "root",
-            root.Match(static _ => "root", static _ => "property", static _ => "index")
+            root.Match(static _ => "root", onChildPath: static _ => "child")
         );
         Assert.Equal(
             "property",
@@ -179,13 +184,13 @@ public sealed class ValidationPathTests
         Assert.Equal("default", unknown.MatchIndexPath("default", static _ => "index"));
 
         var branchLog = new List<string>();
-        root.Match(_ => branchLog.Add("root"), _ => branchLog.Add("child"));
-        property.Match(_ => branchLog.Add("root"), _ => branchLog.Add("child"));
-        index.Match(_ => branchLog.Add("root"), _ => branchLog.Add("child"));
+        root.Match(_ => branchLog.Add("root"), onChildPath: _ => branchLog.Add("child"));
+        property.Match(_ => branchLog.Add("root"), onChildPath: _ => branchLog.Add("child"));
+        index.Match(_ => branchLog.Add("root"), onChildPath: _ => branchLog.Add("child"));
 
         Assert.Equal(["root", "child", "child"], branchLog);
         Assert.Throws<InvalidOperationException>(() =>
-            unknown.Match(_ => branchLog.Add("root"), _ => branchLog.Add("child"))
+            unknown.Match(_ => branchLog.Add("root"), onChildPath: _ => branchLog.Add("child"))
         );
 
         var dispatchLog = new List<string>();
@@ -211,6 +216,15 @@ public sealed class ValidationPathTests
                 _ => dispatchLog.Add("root"),
                 _ => dispatchLog.Add("property"),
                 _ => dispatchLog.Add("index")
+            )
+        );
+
+        Assert.Throws<InvalidOperationException>(() =>
+            property.Match(
+                _ => dispatchLog.Add("root"),
+                _ => dispatchLog.Add("property"),
+                _ => dispatchLog.Add("index"),
+                onChildPath: _ => dispatchLog.Add("child")
             )
         );
 

@@ -125,7 +125,8 @@ internal sealed record DiscriminatedUnionRootModel(
     INamedTypeSymbol RootSymbol,
     ImmutableArray<DiscriminatedUnionCaseModel> AllCases,
     ImmutableArray<DiscriminatedUnionCaseModel> ValidCases,
-    ImmutableArray<DiscriminatedUnionCaseModel> LeafCases
+    ImmutableArray<DiscriminatedUnionCaseModel> LeafCases,
+    ImmutableArray<DiscriminatedUnionCaseModel> GroupingCases
 )
 {
     public bool HasValidCases => !ValidCases.IsEmpty;
@@ -155,8 +156,15 @@ internal sealed record DiscriminatedUnionRootModel(
         var allCasesArray = allCases.ToImmutableArray();
         var validCases = allCasesArray.Where(caseModel => caseModel.IsValidCase).ToImmutableArray();
         var leafCases = GetLeafCases(validCases);
+        var groupingCases = GetGroupingCases(validCases);
 
-        return new DiscriminatedUnionRootModel(rootSymbol, allCasesArray, validCases, leafCases);
+        return new DiscriminatedUnionRootModel(
+            rootSymbol,
+            allCasesArray,
+            validCases,
+            leafCases,
+            groupingCases
+        );
     }
 
     private static ImmutableArray<DiscriminatedUnionCaseModel> GetLeafCases(
@@ -184,6 +192,33 @@ internal sealed record DiscriminatedUnionRootModel(
         }
 
         return leafCases.ToImmutable();
+    }
+
+    private static ImmutableArray<DiscriminatedUnionCaseModel> GetGroupingCases(
+        ImmutableArray<DiscriminatedUnionCaseModel> validCases
+    )
+    {
+        if (validCases.IsDefaultOrEmpty)
+        {
+            return ImmutableArray<DiscriminatedUnionCaseModel>.Empty;
+        }
+
+        var groupingCases = ImmutableArray.CreateBuilder<DiscriminatedUnionCaseModel>();
+
+        foreach (var candidateCase in validCases)
+        {
+            var hasValidDescendant = validCases.Any(otherCase =>
+                !SymbolEqualityComparer.Default.Equals(candidateCase.Symbol, otherCase.Symbol)
+                && InheritsFrom(otherCase.Symbol, candidateCase.Symbol)
+            );
+
+            if (hasValidDescendant)
+            {
+                groupingCases.Add(candidateCase);
+            }
+        }
+
+        return groupingCases.ToImmutable();
     }
 
     private static void TraverseTypeSymbol(

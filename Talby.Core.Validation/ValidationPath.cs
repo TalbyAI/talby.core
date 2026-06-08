@@ -127,23 +127,4 @@ public abstract partial record ValidationPath
 
     #endregion [ Index ]
 
-    /// <summary>
-    /// Dispatches to the matching branch for root and child paths.
-    /// </summary>
-    /// <param name="matchRootPathAction">The action invoked for root paths.</param>
-    /// <param name="matchChildPathAction">The action invoked for child paths.</param>
-    public void Match(Action<RootPath> matchRootPathAction, Action<ChildPath> matchChildPathAction)
-    {
-        switch (this)
-        {
-            case RootPath r:
-                matchRootPathAction(r);
-                break;
-            case ChildPath c:
-                matchChildPathAction(c);
-                break;
-            default:
-                throw new InvalidOperationException("Unknown ValidationPath type.");
-        }
-    }
 }

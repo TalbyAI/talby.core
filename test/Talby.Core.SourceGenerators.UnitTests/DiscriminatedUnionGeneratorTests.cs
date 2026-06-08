@@ -35,9 +35,9 @@ public sealed class DiscriminatedUnionGeneratorTests
         );
     }
 
-    // Scenario: Given a ValidationPath-shaped union, when the generator runs, then it preserves the manual surface, ordering, and documentation contract.
+    // Scenario: Given a ValidationPath-shaped union, when the generator runs, then it emits the branch-aware root Match surface and keeps the documentation contract.
     [Fact]
-    public void ValidationPath_Surface_matches_the_manual_contract()
+    public void ValidationPath_Surface_matches_the_branch_aware_contract()
     {
         var result = RunGenerator(
             ("MarkerStub.cs", AttributeStubSource),
@@ -52,7 +52,7 @@ public sealed class DiscriminatedUnionGeneratorTests
         );
         Assert.Contains("Gets whether this instance is a RootPath.", unionSource);
         Assert.Contains(
-            "Invokes the matching action for the RootPath, PropertyPath, IndexPath cases.",
+            "Invokes the matching action for the RootPath, PropertyPath, IndexPath, ChildPath cases.",
             unionSource
         );
         Assert.Contains(
@@ -74,18 +74,47 @@ public sealed class DiscriminatedUnionGeneratorTests
         Assert.Contains("public TResult Match<TResult>(", unionSource);
         Assert.Contains("public void Match(", unionSource);
         Assert.Contains(
-            "public TResult MatchRootPath<TResult>(TResult defaultValue, global::System.Func<global::Talby.Core.Validation.ValidationPath.RootPath, TResult> matchFunc)",
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.RootPath, TResult> onRootPath",
             unionSource
         );
         Assert.Contains(
-            "public TResult MatchPropertyPath<TResult>(TResult defaultValue, global::System.Func<global::Talby.Core.Validation.ValidationPath.PropertyPath, TResult> matchFunc)",
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.PropertyPath, TResult>? onPropertyPath = null",
             unionSource
         );
         Assert.Contains(
-            "public TResult MatchIndexPath<TResult>(TResult defaultValue, global::System.Func<global::Talby.Core.Validation.ValidationPath.IndexPath, TResult> matchFunc)",
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.IndexPath, TResult>? onIndexPath = null",
+            unionSource
+        );
+        Assert.Contains(
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.ChildPath, TResult>? onChildPath = null",
+            unionSource
+        );
+        Assert.Contains(
+            "global::System.Action<global::Talby.Core.Validation.ValidationPath.RootPath> onRootPath",
+            unionSource
+        );
+        Assert.Contains(
+            "global::System.Action<global::Talby.Core.Validation.ValidationPath.PropertyPath>? onPropertyPath = null",
+            unionSource
+        );
+        Assert.Contains(
+            "global::System.Action<global::Talby.Core.Validation.ValidationPath.IndexPath>? onIndexPath = null",
+            unionSource
+        );
+        Assert.Contains(
+            "global::System.Action<global::Talby.Core.Validation.ValidationPath.ChildPath>? onChildPath = null",
             unionSource
         );
         Assert.DoesNotContain("MatchChildPath", unionSource);
+        Assert.DoesNotContain("matchFunc", unionSource);
+        Assert.DoesNotContain("matchAction", unionSource);
+        Assert.Contains("if (onChildPath is not null)", unionSource);
+        Assert.Contains("onPropertyPath is null", unionSource);
+        Assert.Contains("onIndexPath is null", unionSource);
+        Assert.Contains(
+            "Invalid ValidationPath Match handler combination.",
+            unionSource
+        );
         Assert.Contains(
             "throw new global::System.InvalidOperationException(\"Unknown ValidationPath type.\")",
             unionSource
@@ -100,9 +129,10 @@ public sealed class DiscriminatedUnionGeneratorTests
         );
         AssertOrder(
             unionSource,
-            "public TResult MatchRootPath<TResult>",
-            "public TResult MatchPropertyPath<TResult>",
-            "public TResult MatchIndexPath<TResult>"
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.RootPath, TResult> onRootPath",
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.PropertyPath, TResult>? onPropertyPath = null",
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.IndexPath, TResult>? onIndexPath = null",
+            "global::System.Func<global::Talby.Core.Validation.ValidationPath.ChildPath, TResult>? onChildPath = null"
         );
     }
 
@@ -126,11 +156,11 @@ public sealed class DiscriminatedUnionGeneratorTests
             unionSource
         );
         Assert.Contains(
-            "public TResult MatchLeafOne<TResult>(TResult defaultValue, global::System.Func<global::Demo.Shape.LeafOne, TResult> matchFunc)",
+            "public TResult MatchLeafOne<TResult>(TResult defaultValue, global::System.Func<global::Demo.Shape.LeafOne, TResult> onMatch)",
             unionSource
         );
         Assert.Contains(
-            "public TResult MatchLeafTwo<TResult>(TResult defaultValue, global::System.Func<global::Demo.Shape.LeafTwo, TResult> matchFunc)",
+            "public TResult MatchLeafTwo<TResult>(TResult defaultValue, global::System.Func<global::Demo.Shape.LeafTwo, TResult> onMatch)",
             unionSource
         );
         Assert.DoesNotContain("MatchNode", unionSource);
