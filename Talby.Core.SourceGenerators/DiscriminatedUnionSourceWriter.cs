@@ -109,147 +109,6 @@ internal static class DiscriminatedUnionSourceWriter
         );
     }
 
-    private static void AppendMatchResultMethod(
-        StringBuilder builder,
-        INamedTypeSymbol rootSymbol,
-        ImmutableArray<DiscriminatedUnionCaseModel> leafCases,
-        int indentLevel
-    )
-    {
-        AppendSummary(
-            builder,
-            indentLevel,
-            $"Matches this instance against the {GetCaseNameList(leafCases)} cases."
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            "/// <typeparam name=\"TResult\">The result type.</typeparam>"
-        );
-
-        foreach (var caseModel in leafCases)
-        {
-            AppendIndentedLine(
-                builder,
-                indentLevel,
-                $"/// <param name=\"match{caseModel.Symbol.Name}Func\">The function invoked for {caseModel.Symbol.Name}.</param>"
-            );
-        }
-
-        AppendIndentedLine(builder, indentLevel, "/// <returns>The matched result.</returns>");
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            $"/// <exception cref=\"global::System.InvalidOperationException\">Thrown when the runtime type is not one of the generated {rootSymbol.Name} cases.</exception>"
-        );
-        AppendIndentedLine(builder, indentLevel, "public TResult Match<TResult>(");
-
-        for (var index = 0; index < leafCases.Length; index++)
-        {
-            var caseModel = leafCases[index];
-            var separator = index == leafCases.Length - 1 ? string.Empty : ",";
-
-            AppendIndentedLine(
-                builder,
-                indentLevel + 1,
-                $"global::System.Func<{GetTypeReference(caseModel.Symbol)}, TResult> match{caseModel.Symbol.Name}Func{separator}"
-            );
-        }
-
-        AppendIndentedLine(builder, indentLevel, ")");
-        AppendIndentedLine(builder, indentLevel, "{");
-        AppendIndentedLine(builder, indentLevel + 1, "return this switch");
-        AppendIndentedLine(builder, indentLevel + 1, "{");
-
-        foreach (var caseModel in leafCases)
-        {
-            AppendIndentedLine(
-                builder,
-                indentLevel + 2,
-                $"{GetTypeReference(caseModel.Symbol)} caseValue => match{caseModel.Symbol.Name}Func(caseValue),"
-            );
-        }
-
-        AppendIndentedLine(
-            builder,
-            indentLevel + 2,
-            $"_ => throw new global::System.InvalidOperationException(\"Unknown {rootSymbol.Name} type.\"),"
-        );
-        AppendIndentedLine(builder, indentLevel + 1, "};");
-        AppendIndentedLine(builder, indentLevel, "}");
-    }
-
-    private static void AppendMatchActionMethod(
-        StringBuilder builder,
-        INamedTypeSymbol rootSymbol,
-        ImmutableArray<DiscriminatedUnionCaseModel> leafCases,
-        int indentLevel
-    )
-    {
-        AppendSummary(
-            builder,
-            indentLevel,
-            $"Invokes the matching action for the {GetCaseNameList(leafCases)} cases."
-        );
-
-        foreach (var caseModel in leafCases)
-        {
-            AppendIndentedLine(
-                builder,
-                indentLevel,
-                $"/// <param name=\"match{caseModel.Symbol.Name}Action\">The action invoked for {caseModel.Symbol.Name}.</param>"
-            );
-        }
-
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            $"/// <exception cref=\"global::System.InvalidOperationException\">Thrown when the runtime type is not one of the generated {rootSymbol.Name} cases.</exception>"
-        );
-        AppendIndentedLine(builder, indentLevel, "public void Match(");
-
-        for (var index = 0; index < leafCases.Length; index++)
-        {
-            var caseModel = leafCases[index];
-            var separator = index == leafCases.Length - 1 ? string.Empty : ",";
-
-            AppendIndentedLine(
-                builder,
-                indentLevel + 1,
-                $"global::System.Action<{GetTypeReference(caseModel.Symbol)}> match{caseModel.Symbol.Name}Action{separator}"
-            );
-        }
-
-        AppendIndentedLine(builder, indentLevel, ")");
-        AppendIndentedLine(builder, indentLevel, "{");
-        AppendIndentedLine(builder, indentLevel + 1, "switch (this)");
-        AppendIndentedLine(builder, indentLevel + 1, "{");
-
-        foreach (var caseModel in leafCases)
-        {
-            AppendIndentedLine(
-                builder,
-                indentLevel + 2,
-                $"case {GetTypeReference(caseModel.Symbol)} caseValue:"
-            );
-            AppendIndentedLine(
-                builder,
-                indentLevel + 3,
-                $"match{caseModel.Symbol.Name}Action(caseValue);"
-            );
-            AppendIndentedLine(builder, indentLevel + 3, "break;");
-        }
-
-        AppendIndentedLine(builder, indentLevel + 2, "default:");
-        AppendIndentedLine(
-            builder,
-            indentLevel + 3,
-            $"throw new global::System.InvalidOperationException(\"Unknown {rootSymbol.Name} type.\");"
-        );
-        AppendIndentedLine(builder, indentLevel + 1, "}");
-        AppendIndentedLine(builder, indentLevel, "}");
-    }
-
     private static void AppendBranchAwareMatchResultMethod(
         StringBuilder builder,
         INamedTypeSymbol rootSymbol,
@@ -303,7 +162,12 @@ internal static class DiscriminatedUnionSourceWriter
 
         AppendIndentedLine(builder, indentLevel, ")");
         AppendIndentedLine(builder, indentLevel, "{");
-        AppendBranchAwareMatchValidationFunctions(builder, rootModel, topLevelCases, indentLevel + 1);
+        AppendBranchAwareMatchValidationFunctions(
+            builder,
+            rootModel,
+            topLevelCases,
+            indentLevel + 1
+        );
 
         AppendIndentedLine(
             builder,
@@ -395,7 +259,12 @@ internal static class DiscriminatedUnionSourceWriter
 
         AppendIndentedLine(builder, indentLevel, ")");
         AppendIndentedLine(builder, indentLevel, "{");
-        AppendBranchAwareMatchValidationFunctions(builder, rootModel, topLevelCases, indentLevel + 1);
+        AppendBranchAwareMatchValidationFunctions(
+            builder,
+            rootModel,
+            topLevelCases,
+            indentLevel + 1
+        );
 
         AppendIndentedLine(
             builder,
@@ -862,7 +731,8 @@ internal static class DiscriminatedUnionSourceWriter
         DiscriminatedUnionCaseModel caseModel
     )
     {
-        return GetGroupingAncestors(rootModel, caseModel).Length > 0 || IsGroupingCase(rootModel, caseModel);
+        return GetGroupingAncestors(rootModel, caseModel).Length > 0
+            || IsGroupingCase(rootModel, caseModel);
     }
 
     private static string GetMatchParameterName(DiscriminatedUnionCaseModel caseModel)
@@ -878,100 +748,6 @@ internal static class DiscriminatedUnionSourceWriter
             " && ",
             topLevelCases.Select(static caseModel => $"Validate{caseModel.Symbol.Name}()")
         );
-    }
-
-    private static void AppendLeafMatchResultMethod(
-        StringBuilder builder,
-        DiscriminatedUnionCaseModel caseModel,
-        int indentLevel
-    )
-    {
-        var caseName = caseModel.Symbol.Name;
-
-        AppendSummary(
-            builder,
-            indentLevel,
-            $"Returns the supplied default value unless this instance is a {caseName}."
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            "/// <typeparam name=\"TResult\">The result type.</typeparam>"
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            "/// <param name=\"defaultValue\">The value returned when the instance does not match.</param>"
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            $"/// <param name=\"matchFunc\">The function invoked when this instance is a {caseName}.</param>"
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            "/// <returns>The matched result or the default value.</returns>"
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            $"public TResult Match{caseName}<TResult>(TResult defaultValue, global::System.Func<{GetTypeReference(caseModel.Symbol)}, TResult> matchFunc)"
-        );
-        AppendIndentedLine(builder, indentLevel, "{");
-        AppendIndentedLine(
-            builder,
-            indentLevel + 1,
-            $"return this is {GetTypeReference(caseModel.Symbol)} caseValue ? matchFunc(caseValue) : defaultValue;"
-        );
-        AppendIndentedLine(builder, indentLevel, "}");
-    }
-
-    private static void AppendLeafMatchActionMethod(
-        StringBuilder builder,
-        DiscriminatedUnionCaseModel caseModel,
-        int indentLevel
-    )
-    {
-        var caseName = caseModel.Symbol.Name;
-
-        AppendSummary(
-            builder,
-            indentLevel,
-            $"Invokes the supplied action when this instance is a {caseName}."
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            $"/// <param name=\"matchAction\">The action invoked when this instance is a {caseName}.</param>"
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            "/// <param name=\"defaultAction\">The action invoked when the instance does not match. If null, nothing happens.</param>"
-        );
-        AppendIndentedLine(
-            builder,
-            indentLevel,
-            $"public void Match{caseName}(global::System.Action<{GetTypeReference(caseModel.Symbol)}> matchAction, global::System.Action? defaultAction = null)"
-        );
-        AppendIndentedLine(builder, indentLevel, "{");
-        AppendIndentedLine(
-            builder,
-            indentLevel + 1,
-            $"if (this is {GetTypeReference(caseModel.Symbol)} caseValue)"
-        );
-        AppendIndentedLine(builder, indentLevel + 1, "{");
-        AppendIndentedLine(builder, indentLevel + 2, "matchAction(caseValue);");
-        AppendIndentedLine(builder, indentLevel + 1, "}");
-        AppendIndentedLine(builder, indentLevel + 1, "else");
-        AppendIndentedLine(builder, indentLevel + 1, "{");
-        AppendIndentedLine(builder, indentLevel + 2, "if (defaultAction is not null)");
-        AppendIndentedLine(builder, indentLevel + 2, "{");
-        AppendIndentedLine(builder, indentLevel + 3, "defaultAction();");
-        AppendIndentedLine(builder, indentLevel + 2, "}");
-        AppendIndentedLine(builder, indentLevel + 1, "}");
-        AppendIndentedLine(builder, indentLevel, "}");
     }
 
     private static string GetCaseNameList(ImmutableArray<DiscriminatedUnionCaseModel> cases)

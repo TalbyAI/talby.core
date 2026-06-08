@@ -111,10 +111,7 @@ public sealed class DiscriminatedUnionGeneratorTests
         Assert.Contains("if (onChildPath is not null)", unionSource);
         Assert.Contains("onPropertyPath is null", unionSource);
         Assert.Contains("onIndexPath is null", unionSource);
-        Assert.Contains(
-            "Invalid ValidationPath Match handler combination.",
-            unionSource
-        );
+        Assert.Contains("Invalid ValidationPath Match handler combination.", unionSource);
         Assert.Contains(
             "throw new global::System.InvalidOperationException(\"Unknown ValidationPath type.\")",
             unionSource

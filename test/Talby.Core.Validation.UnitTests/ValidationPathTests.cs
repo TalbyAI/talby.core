@@ -122,10 +122,7 @@ public sealed class ValidationPathTests
         var unknown = new UnknownValidationPath(ValidationPath.Root, "unknown");
         var basePath = new UnknownValidationPath(ValidationPath.Root, "base-path");
 
-        Assert.Equal(
-            "root",
-            root.Match(static _ => "root", onChildPath: static _ => "child")
-        );
+        Assert.Equal("root", root.Match(static _ => "root", onChildPath: static _ => "child"));
         Assert.Equal(
             "property",
             property.Match(static _ => "root", static _ => "property", static _ => "index")
@@ -134,22 +131,13 @@ public sealed class ValidationPathTests
             "index",
             index.Match(static _ => "root", static _ => "property", static _ => "index")
         );
-        Assert.Equal(
-            "child",
-            property.Match(static _ => "root", onChildPath: static _ => "child")
-        );
-        Assert.Equal(
-            "child",
-            index.Match(static _ => "root", onChildPath: static _ => "child")
-        );
+        Assert.Equal("child", property.Match(static _ => "root", onChildPath: static _ => "child"));
+        Assert.Equal("child", index.Match(static _ => "root", onChildPath: static _ => "child"));
         Assert.Throws<InvalidOperationException>(() =>
             unknown.Match(static _ => "root", onChildPath: static _ => "child")
         );
 
-        Assert.Equal(
-            "root",
-            root.Match(static _ => "root", onChildPath: static _ => "child")
-        );
+        Assert.Equal("root", root.Match(static _ => "root", onChildPath: static _ => "child"));
         Assert.Equal(
             "property",
             property.Match(static _ => "root", static _ => "property", static _ => "index")
