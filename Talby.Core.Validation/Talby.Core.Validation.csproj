@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
+		<ProjectReference Include="..\Talby.Core.SourceGenerators\Talby.Core.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<Compile Remove="Resources.Designer.cs" />
 		<EmbeddedResource Update="Resources.resx">
 			<Generator>MSBuild:Compile</Generator>
