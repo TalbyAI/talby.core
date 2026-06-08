@@ -30,11 +30,12 @@ public sealed class SourceGeneratorProjectShapeTests
         Assert.Contains("analyzers/dotnet/cs", project.PackagePaths);
     }
 
-    // Scenario: Given the contracts boundary, When the solution and project graph are inspected, Then the contracts project is in the solution and only the generator depends on it.
+    // Scenario: Given the contracts boundary, When the solution and project graph are inspected, Then the contracts project is in the solution, the validation project references the generator as an analyzer, and the generator does not reference validation back.
     [Fact]
     public void ContractsProject_StaysOneWayInSolutionGraph()
     {
         var solution = LoadSolution("Talby.Core.slnx");
+        var validationProject = LoadProject("Talby.Core.Validation/Talby.Core.Validation.csproj");
         var generatorProject = LoadProject(
             "Talby.Core.SourceGenerators/Talby.Core.SourceGenerators.csproj"
         );
@@ -42,6 +43,26 @@ public sealed class SourceGeneratorProjectShapeTests
         Assert.Contains(
             "Talby.Core.SourceGenerators/Talby.Core.SourceGenerators.csproj",
             solution.ProjectPaths
+        );
+        Assert.Contains(
+            validationProject.ProjectReferences,
+            reference =>
+                NormalizeReferencePath(reference.Include)
+                    .EndsWith(
+                        "Talby.Core.SourceGenerators/Talby.Core.SourceGenerators.csproj",
+                        StringComparison.Ordinal
+                    )
+                && reference.OutputItemType == "Analyzer"
+                && reference.ReferenceOutputAssembly == "false"
+        );
+        Assert.DoesNotContain(
+            generatorProject.ProjectReferences,
+            reference =>
+                NormalizeReferencePath(reference.Include)
+                    .EndsWith(
+                        "Talby.Core.Validation/Talby.Core.Validation.csproj",
+                        StringComparison.Ordinal
+                    )
         );
     }
 
@@ -100,13 +121,16 @@ public sealed class SourceGeneratorProjectShapeTests
             .ToArray();
     }
 
-    private static IReadOnlyList<string> GetProjectReferences(XDocument document)
+    private static IReadOnlyList<ProjectReferenceSnapshot> GetProjectReferences(XDocument document)
     {
         return document
             .Descendants("ProjectReference")
-            .Select(element => element.Attribute("Include")?.Value)
-            .Where(include => !string.IsNullOrWhiteSpace(include))
-            .Select(include => include!)
+            .Select(element => new ProjectReferenceSnapshot(
+                Include: element.Attribute("Include")?.Value ?? string.Empty,
+                OutputItemType: element.Attribute("OutputItemType")?.Value ?? string.Empty,
+                ReferenceOutputAssembly: element.Attribute("ReferenceOutputAssembly")?.Value
+                    ?? string.Empty
+            ))
             .ToArray();
     }
 
@@ -145,11 +169,17 @@ public sealed class SourceGeneratorProjectShapeTests
         string ImplicitUsings,
         string IncludeBuildOutput,
         IReadOnlyList<PackageReferenceSnapshot> PackageReferences,
-        IReadOnlyList<string> ProjectReferences,
+        IReadOnlyList<ProjectReferenceSnapshot> ProjectReferences,
         IReadOnlyList<string> PackagePaths
     );
 
     private sealed record SolutionSnapshot(IReadOnlyList<string> ProjectPaths);
 
     private sealed record PackageReferenceSnapshot(string Include, string PrivateAssets);
+
+    private sealed record ProjectReferenceSnapshot(
+        string Include,
+        string OutputItemType,
+        string ReferenceOutputAssembly
+    );
 }
