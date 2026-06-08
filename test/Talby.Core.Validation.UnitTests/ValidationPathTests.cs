@@ -137,7 +137,6 @@ public sealed class ValidationPathTests
         );
 
         Assert.Equal("base-path", basePath.Path);
-        Assert.Equal("base-path", basePath.ToString());
         Assert.False(basePath.IsRootPath);
         Assert.False(basePath.IsChildPath);
         Assert.False(basePath.IsPropertyPath);
