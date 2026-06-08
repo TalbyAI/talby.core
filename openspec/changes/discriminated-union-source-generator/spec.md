@@ -28,6 +28,7 @@ Add a source generator that turns an annotated root type into the same discrimin
 
 ### Marker and discovery
 
+* The generator MUST provide `GenerateDiscriminatedUnion` as generated source from the source-generator project.
 * The generator MUST treat `GenerateDiscriminatedUnion` as a marker with no parameters.
 * The generator MUST discover annotated root types and inspect their nested types.
 * A nested type MUST be treated as a case only when it inherits, directly or indirectly, from the annotated root.
