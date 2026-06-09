@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Talby.Core**. Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **talby.core**. Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -24,10 +24,10 @@ This project is indexed by GitNexus as **Talby.Core**. Use the GitNexus MCP tool
 
 | Resource | Use for |
 |----------|---------|
-| `gitnexus://repo/Talby.Core/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/Talby.Core/clusters` | All functional areas |
-| `gitnexus://repo/Talby.Core/processes` | All execution flows |
-| `gitnexus://repo/Talby.Core/process/{name}` | Step-by-step execution trace |
+| `gitnexus://repo/talby.core/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/talby.core/clusters` | All functional areas |
+| `gitnexus://repo/talby.core/processes` | All execution flows |
+| `gitnexus://repo/talby.core/process/{name}` | Step-by-step execution trace |
 
 ## CLI
 

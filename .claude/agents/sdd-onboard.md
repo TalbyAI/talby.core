@@ -4,7 +4,7 @@ description: >
   Guide the user through a complete SDD cycle using their real codebase. Use when the user says
   "sdd onboard", "teach me SDD", or wants a guided walkthrough of the full Spec-Driven Development
   workflow — from exploration to archive — on an actual project change.
-model: haiku
+model: GPT-5.4 mini
 tools: Read, Edit, Write, Glob, Grep, Bash, mcp__plugin_engram_engram__mem_search, mcp__plugin_engram_engram__mem_get_observation, mcp__plugin_engram_engram__mem_save, mcp__plugin_engram_engram__mem_update
 ---
 

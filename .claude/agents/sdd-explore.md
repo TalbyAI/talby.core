@@ -4,7 +4,7 @@ description: >
   Explore and investigate ideas before committing to a change. Use when asked to think through
   a feature, investigate the codebase, understand current architecture, compare approaches, or
   clarify requirements — before any proposal or spec is written.
-model: sonnet
+model: GPT-5.4 mini
 tools: Read, Grep, Glob, WebFetch, WebSearch, mcp__plugin_engram_engram__mem_save
 ---
 

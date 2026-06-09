@@ -22,14 +22,14 @@ public sealed class ValidationContext : IValidationContext
         ValidationTarget = validatingTarget;
 
         path.Match(
-            matchRootPathAction: _ =>
+            onRootPath: _ =>
                 throw new ArgumentException(
                     "Path cannot be the root path when a parent context is provided.",
                     nameof(path)
                 ),
-            matchChildPathAction: child =>
+            onChildPath: child =>
             {
-                if (parentContext.Path != child.Parent)
+                if (!parentContext.Path.Equals(child.Parent))
                 {
                     throw new ArgumentException(
                         "Path must be a child path when a parent context is provided.",

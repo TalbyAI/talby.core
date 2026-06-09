@@ -4,7 +4,7 @@ description: >
   Adversarial code reviewer — blind judge A for judgment-day parallel review protocol.
   Triggered by the orchestrator when judgment-day is invoked. Reviews code for
   correctness, edge cases, security, performance, and project standards.
-model: sonnet
+model: GPT-5.4 mini
 tools: Read, Glob, Grep, Bash, mcp__plugin_engram_engram__mem_search, mcp__plugin_engram_engram__mem_get_observation
 ---
 

@@ -4,7 +4,7 @@ description: >
   Archive a completed and verified change. Use when verification has passed and the change
   needs to be closed — merges delta specs into main specs, moves change folder to archive,
   and persists the final archive report. Completes the SDD cycle.
-model: haiku
+model: GPT-5.4 mini
 tools: Read, Edit, Write, Glob, mcp__plugin_engram_engram__mem_search, mcp__plugin_engram_engram__mem_get_observation, mcp__plugin_engram_engram__mem_save
 ---
 

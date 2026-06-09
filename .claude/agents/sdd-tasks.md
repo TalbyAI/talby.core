@@ -3,7 +3,7 @@ name: sdd-tasks
 description: >
   Break down a change into an implementation task checklist. Use when spec and design are both
   ready and the change needs to be sliced into actionable, ordered work items.
-model: sonnet
+model: GPT-5.4 mini
 tools: Read, Edit, Write, Grep, Glob, mcp__plugin_engram_engram__mem_search, mcp__plugin_engram_engram__mem_get_observation, mcp__plugin_engram_engram__mem_save
 ---
 
