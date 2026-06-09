@@ -1,10 +1,10 @@
 namespace Talby.Core.Validation;
 
-public sealed class IsNotNullValidator : ValueValidator
+public sealed class NotNullValidator : ValueValidator
 {
-    public const string ErrorCode = "IsNotNull";
+    public const string ErrorCode = "NotNull";
 
-    public static readonly IsNotNullValidator Instance = new();
+    public static readonly NotNullValidator Instance = new();
 
     protected override ValidationResult Validate(IValidationContext context)
     {
@@ -16,7 +16,7 @@ public sealed class IsNotNullValidator : ValueValidator
         return ValidationResult.Failures(
             new ValidationFailure(
                 context.Path,
-                () => Resources.IsNotNullValidatorMessage,
+                () => Resources.NotNullValidatorMessage,
                 Severity,
                 ErrorCode,
                 AttemptedValue: context.ValidationTarget

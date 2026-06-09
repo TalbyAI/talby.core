@@ -73,7 +73,10 @@ public sealed class ValueValidatorTests
             ValueTask.FromResult(ValidationResult.Success(expectedValue))
         );
 
-        var result = await sut.ValidateAsync(new ValidationContext(inputTarget), CancellationToken.None);
+        var result = await sut.ValidateAsync(
+            new ValidationContext(inputTarget),
+            CancellationToken.None
+        );
 
         Assert.Equal(ValidationSeverity.Error, sut.Severity);
         Assert.True(result.IsValid);
@@ -88,8 +91,8 @@ public sealed class ValueValidatorTests
     public async Task ValueValidatorOfString_ValidateAsync_Returns_success_for_matching_string_targets()
     {
         var target = "hello";
-        var sut = new RecordingTypedValueValidator<string>((_, value) =>
-            ValidationResult.Success(value)
+        var sut = new RecordingTypedValueValidator<string>(
+            (_, value) => ValidationResult.Success(value)
         );
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
@@ -125,7 +128,9 @@ public sealed class ValueValidatorTests
             ValidationSeverity.Info,
             "previous validator emitted a note"
         );
-        var previousValidator = new RecordingValidator(ValidationResult.Success(expectedValue, [warning]));
+        var previousValidator = new RecordingValidator(
+            ValidationResult.Success(expectedValue, [warning])
+        );
         var sut = new RecordingTypedValueValidator<string>(
             (_, value) => ValidationResult.Success(value),
             [previousValidator]
@@ -148,8 +153,8 @@ public sealed class ValueValidatorTests
     public async Task ValueValidatorOfString_ValidateAsync_Uses_default_previous_validators()
     {
         var target = "hello";
-        var sut = new DefaultPreviousTypedValueValidator<string>((_, value) =>
-            ValidationResult.Success(value)
+        var sut = new DefaultPreviousTypedValueValidator<string>(
+            (_, value) => ValidationResult.Success(value)
         );
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
@@ -249,7 +254,9 @@ public sealed class ValueValidatorTests
             ValidationSeverity.Info,
             "previous validator emitted a note"
         );
-        var previousValidator = new RecordingValidator(ValidationResult.Success(expectedValue, [warning]));
+        var previousValidator = new RecordingValidator(
+            ValidationResult.Success(expectedValue, [warning])
+        );
         var sut = new RecordingTypedAsyncValueValidator<string>(
             (_, value) => ValueTask.FromResult(ValidationResult.Success(value)),
             [previousValidator]
@@ -283,7 +290,10 @@ public sealed class ValueValidatorTests
             [failingPreviousValidator, laterPreviousValidator]
         );
 
-        var result = await sut.ValidateAsync(new ValidationContext(new object()), CancellationToken.None);
+        var result = await sut.ValidateAsync(
+            new ValidationContext(new object()),
+            CancellationToken.None
+        );
 
         Assert.False(result.IsValid);
         Assert.Same(failure, result.Errors.Single());
@@ -297,8 +307,8 @@ public sealed class ValueValidatorTests
     public async Task AsyncValueValidatorOfString_ValidateAsync_Uses_default_previous_validators()
     {
         var target = "hello";
-        var sut = new DefaultPreviousTypedAsyncValueValidator<string>((_, value) =>
-            ValueTask.FromResult(ValidationResult.Success(value))
+        var sut = new DefaultPreviousTypedAsyncValueValidator<string>(
+            (_, value) => ValueTask.FromResult(ValidationResult.Success(value))
         );
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
@@ -402,8 +412,7 @@ public sealed class ValueValidatorTests
         }
     }
 
-    private class RecordingTypedValueValidator<T>
-        : ValueValidator<T>
+    private class RecordingTypedValueValidator<T> : ValueValidator<T>
     {
         private readonly Func<IValidationContext, T, ValidationResult> _behavior;
         private readonly IReadOnlyList<IValidator> _previousValidators;
@@ -459,8 +468,7 @@ public sealed class ValueValidatorTests
         }
     }
 
-    private class RecordingTypedAsyncValueValidator<T>
-        : AsyncValueValidator<T>
+    private class RecordingTypedAsyncValueValidator<T> : AsyncValueValidator<T>
     {
         private readonly Func<IValidationContext, T, ValueTask<ValidationResult>> _behavior;
         private readonly IReadOnlyList<IValidator> _previousValidators;
@@ -480,7 +488,10 @@ public sealed class ValueValidatorTests
 
         protected override IEnumerable<IValidator> PreviousValidators => _previousValidators;
 
-        public ValueTask<ValidationResult> InvokeValidate(IValidationContext context, CancellationToken cancel)
+        public ValueTask<ValidationResult> InvokeValidate(
+            IValidationContext context,
+            CancellationToken cancel
+        )
         {
             return Validate(context, cancel);
         }
@@ -501,13 +512,17 @@ public sealed class ValueValidatorTests
         Func<IValidationContext, T, ValueTask<ValidationResult>> behavior
     ) : AsyncValueValidator<T>
     {
-        private readonly Func<IValidationContext, T, ValueTask<ValidationResult>> _behavior = behavior;
+        private readonly Func<IValidationContext, T, ValueTask<ValidationResult>> _behavior =
+            behavior;
 
         public int ValidateCallCount { get; private set; }
 
         public IValidationContext? LastValidateContext { get; private set; }
 
-        public ValueTask<ValidationResult> InvokeValidate(IValidationContext context, CancellationToken cancel)
+        public ValueTask<ValidationResult> InvokeValidate(
+            IValidationContext context,
+            CancellationToken cancel
+        )
         {
             return Validate(context, cancel);
         }
