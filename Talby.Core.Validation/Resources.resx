@@ -61,6 +61,9 @@
   <data name="NotNullValidatorMessage" xml:space="preserve">
     <value>Is required</value>
   </data>
+  <data name="NotEmptyValidatorMessage" xml:space="preserve">
+    <value>Is required</value>
+  </data>
   <data name="IsOfTypeValidatorMessageFormat" xml:space="preserve">
     <value>Must be of type {0}.</value>
   </data>

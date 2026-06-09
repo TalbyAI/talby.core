@@ -121,6 +121,15 @@ namespace Talby.Core.Validation {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Is required.
+        /// </summary>
+        internal static string NotEmptyValidatorMessage {
+            get {
+                return ResourceManager.GetString("NotEmptyValidatorMessage", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Must be of type {0}..
         /// </summary>
         internal static string IsOfTypeValidatorMessageFormat {
