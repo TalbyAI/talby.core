@@ -13,7 +13,7 @@ description: Verification report for the discriminated-union-source-generator ch
 
 | Item             | Result   | Evidence                                                                                                                       |
 | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Tasks            | Complete | `tasks.md` marks all 6 items done                                                                                              |
+| Tasks            | Complete | `tasks.md` marks top-level tasks 1-6 complete, matching the branch-aware source-generator, validation, tests, project-shape checks, and build tasks |
 | Spec coverage    | Complete | Generator, invalid nested policy, deterministic ordering, one file per root, XML docs, and `ValidationPath` parity are covered |
 | Build            | Passed   | `dotnet build Talby.Core.slnx --nologo`                                                                                        |
 | Generator tests  | Passed   | `dotnet test test/Talby.Core.SourceGenerators.UnitTests/Talby.Core.SourceGenerators.UnitTests.csproj --nologo`                 |

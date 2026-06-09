@@ -14,7 +14,7 @@ Replace the current no-op incremental generator with a symbol-driven discriminat
 
 ### Decision: One generated file per union root with deterministic order
 
-**Choice**: Emit exactly one `.g.cs` file per annotated root, ordered by source declaration order with ancestor/grouping types before descendant leaf cases.
+**Choice**: Emit exactly one `.g.cs` file per annotated root, ordered by source declaration order with descendant leaf cases before ancestor/grouping types (leaf-first).
 **Alternatives considered**: A single combined generated file; alphabetical ordering.
 **Rationale**: Per-root files keep review diffs and diagnostics small, and source order preserves author intent.
 
