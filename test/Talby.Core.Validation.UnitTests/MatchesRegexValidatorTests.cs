@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using Talby.Core.Validation;
 
 namespace Talby.Core.Validation.UnitTests;
 

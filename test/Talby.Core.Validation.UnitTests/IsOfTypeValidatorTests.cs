@@ -1,5 +1,3 @@
-using Talby.Core.Validation;
-
 namespace Talby.Core.Validation.UnitTests;
 
 public sealed class IsOfTypeValidatorTests
