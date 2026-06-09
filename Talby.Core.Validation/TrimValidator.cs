@@ -1,15 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Talby.Core.Validation;
 
-public sealed class TrimValidator : ValueValidator
+public sealed class TrimValidator : ValueValidator<string>
 {
     public static readonly TrimValidator Instance = new();
-
-    private static readonly IEnumerable<IValidator> previousValidators =
-    [
-        IsOfTypeValidator<string>.Instance,
-    ];
 
     public TrimValidator(params IEnumerable<char>? charsToTrim)
     {
@@ -25,18 +18,10 @@ public sealed class TrimValidator : ValueValidator
 
     private readonly char[]? charsToTrim;
 
-    protected override bool TryValidate(
-        IValidationContext context,
-        out object? validatedValue,
-        [NotNullWhen(false)] out ValidationFailure? failure
-    )
+    protected override ValidationResult Validate(IValidationContext context, string value)
     {
-        var value = (string)context.ValidationTarget!;
+        value = charsToTrim is null ? value.Trim() : value.Trim(charsToTrim);
 
-        validatedValue = charsToTrim is null ? value.Trim() : value.Trim(charsToTrim);
-        failure = null;
-        return true;
+        return ValidationResult.Success(value);
     }
-
-    protected override IEnumerable<IValidator> PreviousValidators => previousValidators;
 }

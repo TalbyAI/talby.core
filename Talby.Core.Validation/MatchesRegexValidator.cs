@@ -1,16 +1,10 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Talby.Core.Validation;
 
-public sealed class MatchesRegexValidator : ValueValidator
+public sealed class MatchesRegexValidator : ValueValidator<string>
 {
     public const string ErrorCode = "MatchesRegex";
-
-    private static readonly IEnumerable<IValidator> previousValidators =
-    [
-        IsOfTypeValidator<string>.Instance,
-    ];
 
     public MatchesRegexValidator(Regex pattern)
     {
@@ -20,33 +14,27 @@ public sealed class MatchesRegexValidator : ValueValidator
     public Regex Pattern { get; }
     public Func<string>? ErrorMessageFunc { get; init; }
 
-    protected override bool TryValidate(
-        IValidationContext context,
-        out object? validatedValue,
-        [NotNullWhen(false)] out ValidationFailure? failure
-    )
+    protected override ValidationResult Validate(IValidationContext context, string value)
     {
-        if (context.ValidationTarget is string value && !Pattern.IsMatch(value))
+        if (!Pattern.IsMatch(value))
         {
-            validatedValue = null;
-            failure = new(
-                context.Path,
-                ErrorMessageFunc ?? (() => Resources.MatchesRegexMessage),
-                Severity,
-                ErrorCode,
-                AttemptedValue: value,
-                AdditionalData: new Dictionary<string, object?>
-                {
-                    { "Pattern", Pattern.ToString() },
-                }
+            var errorFunc = ErrorMessageFunc ?? (() => Resources.MatchesRegexMessage);
+
+            return ValidationResult.Failures(
+                new ValidationFailure(
+                    context.Path,
+                    errorFunc,
+                    Severity,
+                    ErrorCode,
+                    AttemptedValue: value,
+                    AdditionalData: new Dictionary<string, object?>
+                    {
+                        { "Pattern", Pattern.ToString() },
+                    }
+                )
             );
-            return false;
         }
 
-        validatedValue = null;
-        failure = null;
-        return true;
+        return ValidationResult.Success(value);
     }
-
-    protected override IEnumerable<IValidator> PreviousValidators => previousValidators;
 }

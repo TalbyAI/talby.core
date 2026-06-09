@@ -30,7 +30,7 @@ public sealed class MatchesRegexValidatorTests
 
         Assert.Same(pattern, sut.Pattern);
         Assert.True(result.IsValid);
-        Assert.Null(result.ResultValue);
+        Assert.Equal("hello", result.ResultValue);
         Assert.Empty(result.Errors);
     }
 

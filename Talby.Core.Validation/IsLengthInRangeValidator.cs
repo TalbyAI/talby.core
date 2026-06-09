@@ -1,15 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Talby.Core.Validation;
 
-public sealed class IsLengthInRangeValidator : ValueValidator
+public sealed class IsLengthInRangeValidator : ValueValidator<string>
 {
     public const string ErrorCode = "IsLengthInRange";
-
-    private static readonly IEnumerable<IValidator> previousValidators =
-    [
-        IsOfTypeValidator<string>.Instance,
-    ];
 
     public static IsLengthInRangeValidator WithRange(
         int minLength,
@@ -112,29 +105,6 @@ public sealed class IsLengthInRangeValidator : ValueValidator
 
     private readonly Func<string, ValidationPath, ValidationFailure?> validatorFunc;
 
-    protected override bool TryValidate(
-        IValidationContext context,
-        out object? validatedValue,
-        [NotNullWhen(false)] out ValidationFailure? failure
-    )
-    {
-        if (
-            context.ValidationTarget is string value
-            && validatorFunc(value, context.Path) is { } validationFailure
-        )
-        {
-            validatedValue = null;
-            failure = validationFailure;
-            return false;
-        }
-
-        validatedValue = null;
-        failure = null;
-        return true;
-    }
-
-    protected override IEnumerable<IValidator> PreviousValidators => previousValidators;
-
     private static Func<string, ValidationPath, ValidationFailure?> WithMinimumLengthValidatorFunc(
         int minLength,
         ValidationSeverity severity
@@ -220,5 +190,15 @@ public sealed class IsLengthInRangeValidator : ValueValidator
 
             return null;
         };
+    }
+
+    protected override ValidationResult Validate(IValidationContext context, string value)
+    {
+        if (validatorFunc(value, context.Path) is { } validationFailure)
+        {
+            return ValidationResult.Failures(validationFailure);
+        }
+
+        return ValidationResult.Success(value);
     }
 }

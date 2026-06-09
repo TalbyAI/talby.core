@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Talby.Core.Validation;
 
 public sealed class IsOfTypeValidator<T> : ValueValidator
@@ -8,37 +6,27 @@ public sealed class IsOfTypeValidator<T> : ValueValidator
 
     public static readonly IsOfTypeValidator<T> Instance = new();
 
-    protected override bool TryValidate(
-        IValidationContext context,
-        out object? validatedValue,
-        [NotNullWhen(false)] out ValidationFailure? failure
-    )
+    protected override ValidationResult Validate(IValidationContext context)
     {
         switch (context.ValidationTarget)
         {
-            // If the value is of type T, validation succeeds
             case T value:
-                validatedValue = value;
-                failure = null;
-                return true;
+                return ValidationResult.Success(value);
 
-            // Allow null values to be validated as long as T is a reference type or nullable value type
             case null when default(T) is null:
-                validatedValue = null;
-                failure = null;
-                return true;
+                return ValidationResult.Success(null);
 
-            // For any other type, validation fails
             default:
-                validatedValue = null;
-                failure = new ValidationFailure(
-                    context.Path,
-                    () => string.Format(Resources.IsOfTypeValidatorMessageFormat, typeof(T).Name),
-                    Severity,
-                    ErrorCode,
-                    AttemptedValue: context.ValidationTarget
+                return ValidationResult.Failures(
+                    new ValidationFailure(
+                        context.Path,
+                        () =>
+                            string.Format(Resources.IsOfTypeValidatorMessageFormat, typeof(T).Name),
+                        Severity,
+                        ErrorCode,
+                        AttemptedValue: context.ValidationTarget
+                    )
                 );
-                return false;
         }
     }
 }

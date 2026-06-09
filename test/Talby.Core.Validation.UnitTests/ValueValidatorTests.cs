@@ -9,7 +9,7 @@ public sealed class ValueValidatorTests
     [Fact]
     public async Task ValueValidator_ValidateAsync_Throws_when_context_is_null()
     {
-        var sut = new RecordingValueValidator(_ => (true, null, null));
+        var sut = new RecordingValueValidator(_ => ValidationResult.Valid);
 
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() =>
             sut.ValidateAsync(null!, CancellationToken.None).AsTask()
@@ -18,13 +18,13 @@ public sealed class ValueValidatorTests
         Assert.Equal("context", exception.ParamName);
     }
 
-    // Scenario: Given no previous validators and a successful TryValidate result, When ValidateAsync runs, Then it returns the validated value.
+    // Scenario: Given no previous validators and a successful Validate result, When ValidateAsync runs, Then it returns the validated value.
     [Fact]
-    public async Task ValueValidator_ValidateAsync_Returns_success_when_try_validate_succeeds()
+    public async Task ValueValidator_ValidateAsync_Returns_success_when_validate_succeeds()
     {
         var inputTarget = new object();
         var expectedValue = new object();
-        var sut = new RecordingValueValidator(_ => (true, expectedValue, null));
+        var sut = new RecordingValueValidator(_ => ValidationResult.Success(expectedValue));
 
         var result = await sut.ValidateAsync(
             new ValidationContext(inputTarget),
@@ -35,16 +35,16 @@ public sealed class ValueValidatorTests
         Assert.True(result.IsValid);
         Assert.Same(expectedValue, result.ResultValue);
         Assert.Empty(result.Errors);
-        Assert.Equal(1, sut.TryValidateCallCount);
-        Assert.Same(inputTarget, sut.LastTryValidateContext?.ValidationTarget);
+        Assert.Equal(1, sut.ValidateCallCount);
+        Assert.Same(inputTarget, sut.LastValidateContext?.ValidationTarget);
     }
 
-    // Scenario: Given no previous validators and a failing TryValidate result, When ValidateAsync runs, Then it returns the reported failure.
+    // Scenario: Given no previous validators and a failing Validate result, When ValidateAsync runs, Then it returns the reported failure.
     [Fact]
-    public async Task ValueValidator_ValidateAsync_Returns_failure_when_try_validate_fails()
+    public async Task ValueValidator_ValidateAsync_Returns_failure_when_validate_fails()
     {
         var failure = CreateFailure("value", ValidationSeverity.Warning, "value is not valid");
-        var sut = new RecordingValueValidator(_ => (false, null, failure))
+        var sut = new RecordingValueValidator(_ => ValidationResult.Failures(failure))
         {
             Severity = ValidationSeverity.Warning,
         };
@@ -59,7 +59,7 @@ public sealed class ValueValidatorTests
         Assert.Equal(ValidationSeverity.Warning, result.Severity);
         Assert.Single(result.Errors);
         Assert.Same(failure, result.Errors.Single());
-        Assert.Equal(1, sut.TryValidateCallCount);
+        Assert.Equal(1, sut.ValidateCallCount);
     }
 
     // Scenario: Given previous validators succeed, When ValidateAsync runs, Then each previous result becomes the next context target.
@@ -75,7 +75,7 @@ public sealed class ValueValidatorTests
         var secondPreviousValidator = new RecordingValidator(secondPreviousResult);
         var sut = new RecordingValueValidatorWithPreviousValidators(
             [firstPreviousValidator, secondPreviousValidator],
-            context => (true, context.ValidationTarget, null)
+            context => ValidationResult.Success(context.ValidationTarget)
         );
 
         var result = await sut.ValidateAsync(
@@ -89,11 +89,11 @@ public sealed class ValueValidatorTests
         Assert.Equal(1, secondPreviousValidator.CallCount);
         Assert.Same(initialTarget, firstPreviousValidator.LastContext?.ValidationTarget);
         Assert.Same(firstValidatedValue, secondPreviousValidator.LastContext?.ValidationTarget);
-        Assert.Same(finalValidatedValue, sut.LastTryValidateContext?.ValidationTarget);
-        Assert.Equal(1, sut.TryValidateCallCount);
+        Assert.Same(finalValidatedValue, sut.LastValidateContext?.ValidationTarget);
+        Assert.Equal(1, sut.ValidateCallCount);
     }
 
-    // Scenario: Given a previous validator fails, When ValidateAsync runs, Then it returns that failure without calling TryValidate or later validators.
+    // Scenario: Given a previous validator fails, When ValidateAsync runs, Then it returns that failure without calling Validate or later validators.
     [Fact]
     public async Task ValueValidator_ValidateAsync_Returns_first_previous_failure_without_continuing()
     {
@@ -106,7 +106,7 @@ public sealed class ValueValidatorTests
         var laterPreviousValidator = new RecordingValidator(ValidationResult.Success(new object()));
         var sut = new RecordingValueValidatorWithPreviousValidators(
             [failingPreviousValidator, laterPreviousValidator],
-            _ => (true, null, null)
+            _ => ValidationResult.Valid
         );
 
         var result = await sut.ValidateAsync(
@@ -118,7 +118,7 @@ public sealed class ValueValidatorTests
         Assert.Same(failure, result.Errors.Single());
         Assert.Equal(1, failingPreviousValidator.CallCount);
         Assert.Equal(0, laterPreviousValidator.CallCount);
-        Assert.Equal(0, sut.TryValidateCallCount);
+        Assert.Equal(0, sut.ValidateCallCount);
     }
 
     private static ValidationFailure CreateFailure(
@@ -151,33 +151,24 @@ public sealed class ValueValidatorTests
         }
     }
 
-    private class RecordingValueValidator(
-        Func<IValidationContext, (bool IsValid, object? Value, ValidationFailure? Failure)> behavior
-    ) : ValueValidator
+    private class RecordingValueValidator(Func<IValidationContext, ValidationResult> behavior)
+        : ValueValidator
     {
-        public int TryValidateCallCount { get; private set; }
+        public int ValidateCallCount { get; private set; }
 
-        public IValidationContext? LastTryValidateContext { get; private set; }
+        public IValidationContext? LastValidateContext { get; private set; }
 
-        protected override bool TryValidate(
-            IValidationContext context,
-            out object? validatedValue,
-            [NotNullWhen(false)] out ValidationFailure? failure
-        )
+        protected override ValidationResult Validate(IValidationContext context)
         {
-            TryValidateCallCount++;
-            LastTryValidateContext = context;
-
-            var outcome = behavior(context);
-            validatedValue = outcome.Value;
-            failure = outcome.Failure;
-            return outcome.IsValid;
+            ValidateCallCount++;
+            LastValidateContext = context;
+            return behavior(context);
         }
     }
 
     private sealed class RecordingValueValidatorWithPreviousValidators(
         IReadOnlyList<IValidator> previousValidators,
-        Func<IValidationContext, (bool IsValid, object? Value, ValidationFailure? Failure)> behavior
+        Func<IValidationContext, ValidationResult> behavior
     ) : RecordingValueValidator(behavior)
     {
         protected override IEnumerable<IValidator> PreviousValidators => previousValidators;

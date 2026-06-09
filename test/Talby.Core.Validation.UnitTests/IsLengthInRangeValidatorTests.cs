@@ -15,7 +15,7 @@ public sealed class IsLengthInRangeValidatorTests
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
         Assert.True(result.IsValid);
-        Assert.Null(result.ResultValue);
+        Assert.Equal(target, result.ResultValue);
         Assert.Empty(result.Errors);
         Assert.Equal(2, sut.MinLength);
         Assert.Equal(5, sut.MaxLength);
@@ -132,23 +132,21 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal(3, maximumLength.Value);
     }
 
-    // Scenario: Given a non-string target, When the protected TryValidate method runs, Then it returns success without a failure.
+    // Scenario: Given a non-string target, When ValidateAsync runs, Then the type guard fails before length validation.
     [Fact]
-    public void IsLengthInRangeValidator_TryValidate_Returns_success_for_non_string_targets()
+    public async Task IsLengthInRangeValidator_ValidateAsync_Returns_type_failure_for_non_string_targets()
     {
         var target = new object();
         var sut = IsLengthInRangeValidator.WithRange(1, 3);
 
-        var result = TryValidate(
-            sut,
-            new ValidationContext(target),
-            out var validatedValue,
-            out var failure
-        );
+        var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
-        Assert.True(result);
-        Assert.Null(validatedValue);
-        Assert.Null(failure);
+        var failure = Assert.Single(result.Errors);
+
+        Assert.False(result.IsValid);
+        Assert.Null(result.ResultValue);
+        Assert.Equal(IsOfTypeValidator<string>.ErrorCode, failure.ErrorCode);
+        Assert.Same(target, failure.AttemptedValue);
     }
 
     // Scenario: Given a negative minimum length, When WithRange is called, Then it throws an ArgumentOutOfRangeException.
@@ -199,7 +197,7 @@ public sealed class IsLengthInRangeValidatorTests
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
         Assert.True(result.IsValid);
-        Assert.Null(result.ResultValue);
+        Assert.Equal(target, result.ResultValue);
         Assert.Empty(result.Errors);
         Assert.Equal(3, sut.MinLength);
         Assert.Null(sut.MaxLength);
@@ -253,7 +251,7 @@ public sealed class IsLengthInRangeValidatorTests
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
         Assert.True(result.IsValid);
-        Assert.Null(result.ResultValue);
+        Assert.Equal(target, result.ResultValue);
         Assert.Empty(result.Errors);
         Assert.Null(sut.MinLength);
         Assert.Equal(3, sut.MaxLength);
@@ -296,12 +294,4 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal("maxLength", exception.ParamName);
         Assert.StartsWith("Maximum length cannot be negative.", exception.Message);
     }
-
-    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "TryValidate")]
-    private static extern bool TryValidate(
-        IsLengthInRangeValidator validator,
-        IValidationContext context,
-        out object? validatedValue,
-        out ValidationFailure? failure
-    );
 }

@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Talby.Core.Validation;
 
 public sealed class IsNotNullValidator : ValueValidator
@@ -8,27 +6,21 @@ public sealed class IsNotNullValidator : ValueValidator
 
     public static readonly IsNotNullValidator Instance = new();
 
-    protected override bool TryValidate(
-        IValidationContext context,
-        out object? validatedValue,
-        [NotNullWhen(false)] out ValidationFailure? failure
-    )
+    protected override ValidationResult Validate(IValidationContext context)
     {
         if (context.ValidationTarget is { } value)
         {
-            validatedValue = value;
-            failure = null;
-            return true;
+            return ValidationResult.Success(value);
         }
 
-        validatedValue = null;
-        failure = new ValidationFailure(
-            context.Path,
-            () => Resources.IsNotNullValidatorMessage,
-            Severity,
-            ErrorCode,
-            AttemptedValue: context.ValidationTarget
+        return ValidationResult.Failures(
+            new ValidationFailure(
+                context.Path,
+                () => Resources.IsNotNullValidatorMessage,
+                Severity,
+                ErrorCode,
+                AttemptedValue: context.ValidationTarget
+            )
         );
-        return false;
     }
 }

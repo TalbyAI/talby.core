@@ -1,15 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
 		<ProjectReference Include="..\Talby.Core.SourceGenerators\Talby.Core.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<Compile Remove="Resources.Designer.cs" />
-		<EmbeddedResource Update="Resources.resx">
-			<Generator>MSBuild:Compile</Generator>
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
-			<StronglyTypedFileName>Resources.Designer.cs</StronglyTypedFileName>
-			<StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
-			<StronglyTypedNamespace>Talby.Core.Validation</StronglyTypedNamespace>
-			<StronglyTypedClassName>Resources</StronglyTypedClassName>
-			<PublicClass>false</PublicClass>
-		</EmbeddedResource>
 	</ItemGroup>
 </Project>
