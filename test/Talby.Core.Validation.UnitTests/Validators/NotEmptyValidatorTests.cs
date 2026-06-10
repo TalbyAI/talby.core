@@ -110,6 +110,27 @@ public sealed class NotEmptyValidatorTests
         Assert.Equal(0, target.MoveNextCount);
     }
 
+    // Scenario: Given an empty collection, When ValidateAsync runs, Then it fails because the collection has no items.
+    [Fact]
+    public async Task GivenEmptyCollection_WhenValidateAsync_ThenReturnsFailure()
+    {
+        var target = new List<int>();
+        var sut = NotEmptyValidator<List<int>>.Instance;
+
+        var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
+
+        var failure = Assert.Single(result.Errors);
+
+        Assert.False(result.IsValid);
+        Assert.Null(result.ResultValue);
+        Assert.Equal(ValidationSeverity.Error, result.Severity);
+        Assert.Equal(ValidationPath.Root, failure.Path);
+        Assert.Equal(ValidationSeverity.Error, failure.Severity);
+        Assert.Equal(NotEmptyValidator<List<int>>.ErrorCode, failure.ErrorCode);
+        Assert.Same(target, failure.AttemptedValue);
+        Assert.Equal("Is required", failure.ErrorMessageFunc());
+    }
+
     private sealed class DeferredEnumerable : IEnumerable<int>
     {
         public int MoveNextCount { get; private set; }
