@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Talby.Core.Validation.UnitTests;
+namespace Talby.Core.Validation.UnitTests.Validators;
 
 public sealed class NotEmptyValidatorTests
 {
