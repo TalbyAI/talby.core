@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Talby.Core.Validation;
+namespace Talby.Core.Validation.Validators;
 
 /// <summary>
 /// Validates that a value is not empty.

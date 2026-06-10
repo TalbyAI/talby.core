@@ -1,4 +1,4 @@
-namespace Talby.Core.Validation;
+namespace Talby.Core.Validation.Validators;
 
 /// <summary>
 /// Validates that a string length falls within a configured range.

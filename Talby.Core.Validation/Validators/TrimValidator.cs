@@ -1,4 +1,4 @@
-namespace Talby.Core.Validation;
+namespace Talby.Core.Validation.Validators;
 
 /// <summary>
 /// Trims leading and trailing characters from string values.

@@ -1,4 +1,4 @@
-namespace Talby.Core.Validation;
+namespace Talby.Core.Validation.Validators;
 
 /// <summary>
 /// Validates that the target is of the expected type.

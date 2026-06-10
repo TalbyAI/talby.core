@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Talby.Core.Validation;
+namespace Talby.Core.Validation.Validators;
 
 /// <summary>
 /// Validates that a string matches a regular expression.
@@ -25,6 +25,7 @@ public sealed class MatchesRegexValidator : ValueValidator<string>
     /// Gets the regular expression used for validation.
     /// </summary>
     public Regex Pattern { get; }
+
     /// <summary>
     /// Gets or sets the custom error message factory.
     /// </summary>

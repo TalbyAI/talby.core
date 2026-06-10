@@ -1,6 +1,6 @@
 using System.Net.Mail;
 
-namespace Talby.Core.Validation;
+namespace Talby.Core.Validation.Validators;
 
 /// <summary>
 /// Validates that a string is a valid email address.
