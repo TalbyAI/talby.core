@@ -67,22 +67,22 @@
   <data name="IsOfTypeValidatorMessageFormat" xml:space="preserve">
     <value>Must be of type {0}.</value>
   </data>
-  <data name="IsLengthInRangeMinimumLengthCannotBeNegativeMessage" xml:space="preserve">
+  <data name="LengthValidatorMinimumLengthCannotBeNegativeMessage" xml:space="preserve">
     <value>Minimum length cannot be negative.</value>
   </data>
-  <data name="IsLengthInRangeMaximumLengthCannotBeNegativeMessage" xml:space="preserve">
+  <data name="LengthValidatorMaximumLengthCannotBeNegativeMessage" xml:space="preserve">
     <value>Maximum length cannot be negative.</value>
   </data>
-  <data name="IsLengthInRangeMinimumLengthCannotBeGreaterThanMaximumLengthMessage" xml:space="preserve">
+  <data name="LengthValidatorMinimumLengthCannotBeGreaterThanMaximumLengthMessage" xml:space="preserve">
     <value>Minimum length cannot be greater than maximum length.</value>
   </data>
-  <data name="IsLengthInRangeValueMustBeAtLeastMessageFormat" xml:space="preserve">
+  <data name="LengthValidatorValueMustBeAtLeastMessageFormat" xml:space="preserve">
     <value>Must be at least {0} characters long.</value>
   </data>
-  <data name="IsLengthInRangeValueMustBeAtMostMessageFormat" xml:space="preserve">
+  <data name="LengthValidatorValueMustBeAtMostMessageFormat" xml:space="preserve">
     <value>Must be at most {0} characters long.</value>
   </data>
-  <data name="IsLengthInRangeValueMustBeBetweenMessageFormat" xml:space="preserve">
+  <data name="LengthValidatorValueMustBeBetweenMessageFormat" xml:space="preserve">
     <value>Must be between {0} and {1} characters long.</value>
   </data>
   <data name="MatchesRegexMessage" xml:space="preserve">

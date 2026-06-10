@@ -60,54 +60,54 @@ namespace Talby.Core.Validation {
         /// <summary>
         ///   Looks up a localized string similar to Maximum length cannot be negative..
         /// </summary>
-        internal static string IsLengthInRangeMaximumLengthCannotBeNegativeMessage {
+        internal static string LengthValidatorMaximumLengthCannotBeNegativeMessage {
             get {
-                return ResourceManager.GetString("IsLengthInRangeMaximumLengthCannotBeNegativeMessage", resourceCulture);
+                return ResourceManager.GetString("LengthValidatorMaximumLengthCannotBeNegativeMessage", resourceCulture);
             }
         }
 
         /// <summary>
         ///   Looks up a localized string similar to Minimum length cannot be greater than maximum length..
         /// </summary>
-        internal static string IsLengthInRangeMinimumLengthCannotBeGreaterThanMaximumLengthMessage {
+        internal static string LengthValidatorMinimumLengthCannotBeGreaterThanMaximumLengthMessage {
             get {
-                return ResourceManager.GetString("IsLengthInRangeMinimumLengthCannotBeGreaterThanMaximumLengthMessage", resourceCulture);
+                return ResourceManager.GetString("LengthValidatorMinimumLengthCannotBeGreaterThanMaximumLengthMessage", resourceCulture);
             }
         }
 
         /// <summary>
         ///   Looks up a localized string similar to Minimum length cannot be negative..
         /// </summary>
-        internal static string IsLengthInRangeMinimumLengthCannotBeNegativeMessage {
+        internal static string LengthValidatorMinimumLengthCannotBeNegativeMessage {
             get {
-                return ResourceManager.GetString("IsLengthInRangeMinimumLengthCannotBeNegativeMessage", resourceCulture);
+                return ResourceManager.GetString("LengthValidatorMinimumLengthCannotBeNegativeMessage", resourceCulture);
             }
         }
 
         /// <summary>
         ///   Looks up a localized string similar to Must be at least {0} characters long..
         /// </summary>
-        internal static string IsLengthInRangeValueMustBeAtLeastMessageFormat {
+        internal static string LengthValidatorValueMustBeAtLeastMessageFormat {
             get {
-                return ResourceManager.GetString("IsLengthInRangeValueMustBeAtLeastMessageFormat", resourceCulture);
+                return ResourceManager.GetString("LengthValidatorValueMustBeAtLeastMessageFormat", resourceCulture);
             }
         }
 
         /// <summary>
         ///   Looks up a localized string similar to Must be at most {0} characters long..
         /// </summary>
-        internal static string IsLengthInRangeValueMustBeAtMostMessageFormat {
+        internal static string LengthValidatorValueMustBeAtMostMessageFormat {
             get {
-                return ResourceManager.GetString("IsLengthInRangeValueMustBeAtMostMessageFormat", resourceCulture);
+                return ResourceManager.GetString("LengthValidatorValueMustBeAtMostMessageFormat", resourceCulture);
             }
         }
 
         /// <summary>
         ///   Looks up a localized string similar to Must be between {0} and {1} characters long..
         /// </summary>
-        internal static string IsLengthInRangeValueMustBeBetweenMessageFormat {
+        internal static string LengthValidatorValueMustBeBetweenMessageFormat {
             get {
-                return ResourceManager.GetString("IsLengthInRangeValueMustBeBetweenMessageFormat", resourceCulture);
+                return ResourceManager.GetString("LengthValidatorValueMustBeBetweenMessageFormat", resourceCulture);
             }
         }
 

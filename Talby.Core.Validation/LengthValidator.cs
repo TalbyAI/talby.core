@@ -1,10 +1,10 @@
 namespace Talby.Core.Validation;
 
-public sealed class IsLengthInRangeValidator : ValueValidator<string>
+public sealed class LengthValidator : ValueValidator<string>
 {
-    public const string ErrorCode = "IsLengthInRange";
+    public const string ErrorCode = "Length";
 
-    public static IsLengthInRangeValidator WithRange(
+    public static LengthValidator WithRange(
         int minLength,
         int maxLength,
         ValidationSeverity severity = ValidationSeverity.Error
@@ -14,7 +14,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
         {
             throw new ArgumentOutOfRangeException(
                 nameof(minLength),
-                Resources.IsLengthInRangeMinimumLengthCannotBeNegativeMessage
+                Resources.LengthValidatorMinimumLengthCannotBeNegativeMessage
             );
         }
 
@@ -22,18 +22,18 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
         {
             throw new ArgumentOutOfRangeException(
                 nameof(maxLength),
-                Resources.IsLengthInRangeMaximumLengthCannotBeNegativeMessage
+                Resources.LengthValidatorMaximumLengthCannotBeNegativeMessage
             );
         }
 
         if (maxLength >= 0 && minLength > maxLength)
         {
             throw new ArgumentException(
-                Resources.IsLengthInRangeMinimumLengthCannotBeGreaterThanMaximumLengthMessage
+                Resources.LengthValidatorMinimumLengthCannotBeGreaterThanMaximumLengthMessage
             );
         }
 
-        return new IsLengthInRangeValidator(
+        return new LengthValidator(
             minLength,
             maxLength,
             WithRangeValidatorFunc(minLength, maxLength, severity)
@@ -43,7 +43,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
         };
     }
 
-    public static IsLengthInRangeValidator WithMinimumLength(
+    public static LengthValidator WithMinimumLength(
         int minLength,
         ValidationSeverity severity = ValidationSeverity.Error
     )
@@ -56,7 +56,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
             );
         }
 
-        return new IsLengthInRangeValidator(
+        return new LengthValidator(
             minLength,
             null,
             WithMinimumLengthValidatorFunc(minLength, severity)
@@ -66,7 +66,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
         };
     }
 
-    public static IsLengthInRangeValidator WithMaximumLength(
+    public static LengthValidator WithMaximumLength(
         int maxLength,
         ValidationSeverity severity = ValidationSeverity.Error
     )
@@ -79,7 +79,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
             );
         }
 
-        return new IsLengthInRangeValidator(
+        return new LengthValidator(
             null,
             maxLength,
             WithMaximumLengthValidatorFunc(maxLength, severity)
@@ -89,7 +89,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
         };
     }
 
-    private IsLengthInRangeValidator(
+    private LengthValidator(
         int? minValue,
         int? maxValue,
         Func<string, ValidationPath, ValidationFailure?> validatorFunc
@@ -118,7 +118,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
                     path,
                     () =>
                         string.Format(
-                            Resources.IsLengthInRangeValueMustBeAtLeastMessageFormat,
+                            Resources.LengthValidatorValueMustBeAtLeastMessageFormat,
                             minLength
                         ),
                     severity,
@@ -145,7 +145,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
                     path,
                     () =>
                         string.Format(
-                            Resources.IsLengthInRangeValueMustBeAtMostMessageFormat,
+                            Resources.LengthValidatorValueMustBeAtMostMessageFormat,
                             maxLength
                         ),
                     severity,
@@ -173,7 +173,7 @@ public sealed class IsLengthInRangeValidator : ValueValidator<string>
                     path,
                     () =>
                         string.Format(
-                            Resources.IsLengthInRangeValueMustBeBetweenMessageFormat,
+                            Resources.LengthValidatorValueMustBeBetweenMessageFormat,
                             minLength,
                             maxLength
                         ),

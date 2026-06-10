@@ -1,13 +1,13 @@
 namespace Talby.Core.Validation.UnitTests;
 
-public sealed class IsLengthInRangeValidatorTests
+public sealed class LengthValidatorTests
 {
     // Scenario: Given a string within the configured range, When ValidateAsync runs, Then it returns success and the original string.
     [Fact]
-    public async Task IsLengthInRangeValidator_ValidateAsync_Returns_success_for_values_within_range()
+    public async Task LengthValidator_ValidateAsync_Returns_success_for_values_within_range()
     {
         var target = "test";
-        var sut = IsLengthInRangeValidator.WithRange(2, 5, ValidationSeverity.Warning);
+        var sut = LengthValidator.WithRange(2, 5, ValidationSeverity.Warning);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -21,10 +21,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string shorter than the configured range, When ValidateAsync runs, Then it returns the range failure.
     [Fact]
-    public async Task IsLengthInRangeValidator_ValidateAsync_Returns_failure_when_value_is_shorter_than_the_configured_range()
+    public async Task LengthValidator_ValidateAsync_Returns_failure_when_value_is_shorter_than_the_configured_range()
     {
         var target = "a";
-        var sut = IsLengthInRangeValidator.WithRange(2, 5, ValidationSeverity.Warning);
+        var sut = LengthValidator.WithRange(2, 5, ValidationSeverity.Warning);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -35,7 +35,7 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal(ValidationSeverity.Warning, result.Severity);
         Assert.Equal(ValidationPath.Root, failure.Path);
         Assert.Equal(ValidationSeverity.Warning, failure.Severity);
-        Assert.Equal(IsLengthInRangeValidator.ErrorCode, failure.ErrorCode);
+        Assert.Equal(LengthValidator.ErrorCode, failure.ErrorCode);
         Assert.Same(target, failure.AttemptedValue);
         Assert.Equal("Must be between 2 and 5 characters long.", failure.ErrorMessageFunc());
         Assert.NotNull(failure.AdditionalData);
@@ -51,10 +51,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string longer than the configured range, When ValidateAsync runs, Then it returns the range failure.
     [Fact]
-    public async Task IsLengthInRangeValidator_ValidateAsync_Returns_failure_when_value_is_longer_than_the_configured_range()
+    public async Task LengthValidator_ValidateAsync_Returns_failure_when_value_is_longer_than_the_configured_range()
     {
         var target = "abcdef";
-        var sut = IsLengthInRangeValidator.WithRange(2, 5, ValidationSeverity.Warning);
+        var sut = LengthValidator.WithRange(2, 5, ValidationSeverity.Warning);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -65,7 +65,7 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal(ValidationSeverity.Warning, result.Severity);
         Assert.Equal(ValidationPath.Root, failure.Path);
         Assert.Equal(ValidationSeverity.Warning, failure.Severity);
-        Assert.Equal(IsLengthInRangeValidator.ErrorCode, failure.ErrorCode);
+        Assert.Equal(LengthValidator.ErrorCode, failure.ErrorCode);
         Assert.Same(target, failure.AttemptedValue);
         Assert.Equal("Must be between 2 and 5 characters long.", failure.ErrorMessageFunc());
         Assert.NotNull(failure.AdditionalData);
@@ -81,10 +81,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string shorter than the minimum length, When ValidateAsync runs, Then it returns the minimum length failure.
     [Fact]
-    public async Task IsLengthInRangeValidator_ValidateAsync_Returns_failure_when_value_is_shorter_than_minimum_length()
+    public async Task LengthValidator_ValidateAsync_Returns_failure_when_value_is_shorter_than_minimum_length()
     {
         var target = "ab";
-        var sut = IsLengthInRangeValidator.WithMinimumLength(3, ValidationSeverity.Warning);
+        var sut = LengthValidator.WithMinimumLength(3, ValidationSeverity.Warning);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -95,7 +95,7 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal(ValidationSeverity.Warning, result.Severity);
         Assert.Equal(ValidationPath.Root, failure.Path);
         Assert.Equal(ValidationSeverity.Warning, failure.Severity);
-        Assert.Equal(IsLengthInRangeValidator.ErrorCode, failure.ErrorCode);
+        Assert.Equal(LengthValidator.ErrorCode, failure.ErrorCode);
         Assert.Same(target, failure.AttemptedValue);
         Assert.Equal("Must be at least 3 characters long.", failure.ErrorMessageFunc());
         Assert.NotNull(failure.AdditionalData);
@@ -106,10 +106,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string longer than the maximum length, When ValidateAsync runs, Then it returns the maximum length failure.
     [Fact]
-    public async Task IsLengthInRangeValidator_ValidateAsync_Returns_failure_when_value_is_longer_than_maximum_length()
+    public async Task LengthValidator_ValidateAsync_Returns_failure_when_value_is_longer_than_maximum_length()
     {
         var target = "abcd";
-        var sut = IsLengthInRangeValidator.WithMaximumLength(3, ValidationSeverity.Warning);
+        var sut = LengthValidator.WithMaximumLength(3, ValidationSeverity.Warning);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -120,7 +120,7 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal(ValidationSeverity.Warning, result.Severity);
         Assert.Equal(ValidationPath.Root, failure.Path);
         Assert.Equal(ValidationSeverity.Warning, failure.Severity);
-        Assert.Equal(IsLengthInRangeValidator.ErrorCode, failure.ErrorCode);
+        Assert.Equal(LengthValidator.ErrorCode, failure.ErrorCode);
         Assert.Same(target, failure.AttemptedValue);
         Assert.Equal("Must be at most 3 characters long.", failure.ErrorMessageFunc());
         Assert.NotNull(failure.AdditionalData);
@@ -131,10 +131,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a non-string target, When ValidateAsync runs, Then the type guard fails before length validation.
     [Fact]
-    public async Task IsLengthInRangeValidator_ValidateAsync_Returns_type_failure_for_non_string_targets()
+    public async Task LengthValidator_ValidateAsync_Returns_type_failure_for_non_string_targets()
     {
         var target = new object();
-        var sut = IsLengthInRangeValidator.WithRange(1, 3);
+        var sut = LengthValidator.WithRange(1, 3);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -148,10 +148,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a negative minimum length, When WithRange is called, Then it throws an ArgumentOutOfRangeException.
     [Fact]
-    public void IsLengthInRangeValidator_WithRange_Throws_when_minimum_length_is_negative()
+    public void LengthValidator_WithRange_Throws_when_minimum_length_is_negative()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            IsLengthInRangeValidator.WithRange(-1, 3)
+            LengthValidator.WithRange(-1, 3)
         );
 
         Assert.Equal("minLength", exception.ParamName);
@@ -160,10 +160,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a negative maximum length, When WithRange is called, Then it throws an ArgumentOutOfRangeException.
     [Fact]
-    public void IsLengthInRangeValidator_WithRange_Throws_when_maximum_length_is_negative()
+    public void LengthValidator_WithRange_Throws_when_maximum_length_is_negative()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            IsLengthInRangeValidator.WithRange(1, -1)
+            LengthValidator.WithRange(1, -1)
         );
 
         Assert.Equal("maxLength", exception.ParamName);
@@ -172,10 +172,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a minimum length greater than the maximum length, When WithRange is called, Then it throws an ArgumentException.
     [Fact]
-    public void IsLengthInRangeValidator_WithRange_Throws_when_minimum_length_is_greater_than_maximum_length()
+    public void LengthValidator_WithRange_Throws_when_minimum_length_is_greater_than_maximum_length()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
-            IsLengthInRangeValidator.WithRange(4, 3)
+            LengthValidator.WithRange(4, 3)
         );
 
         Assert.StartsWith(
@@ -186,10 +186,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string meeting the minimum length, When ValidateAsync runs, Then it returns success and the original string.
     [Fact]
-    public async Task IsLengthInRangeValidator_WithMinimumLength_Returns_success_for_values_meeting_the_minimum_length()
+    public async Task LengthValidator_WithMinimumLength_Returns_success_for_values_meeting_the_minimum_length()
     {
         var target = "abc";
-        var sut = IsLengthInRangeValidator.WithMinimumLength(3, ValidationSeverity.Info);
+        var sut = LengthValidator.WithMinimumLength(3, ValidationSeverity.Info);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -203,10 +203,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string shorter than the configured minimum length, When ValidateAsync runs, Then it returns the expected failure.
     [Fact]
-    public async Task IsLengthInRangeValidator_WithMinimumLength_Returns_failure_for_values_shorter_than_the_minimum_length()
+    public async Task LengthValidator_WithMinimumLength_Returns_failure_for_values_shorter_than_the_minimum_length()
     {
         var target = "ab";
-        var sut = IsLengthInRangeValidator.WithMinimumLength(3, ValidationSeverity.Warning);
+        var sut = LengthValidator.WithMinimumLength(3, ValidationSeverity.Warning);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -217,7 +217,7 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal(ValidationSeverity.Warning, result.Severity);
         Assert.Equal(ValidationPath.Root, failure.Path);
         Assert.Equal(ValidationSeverity.Warning, failure.Severity);
-        Assert.Equal(IsLengthInRangeValidator.ErrorCode, failure.ErrorCode);
+        Assert.Equal(LengthValidator.ErrorCode, failure.ErrorCode);
         Assert.Same(target, failure.AttemptedValue);
         Assert.Equal("Must be at least 3 characters long.", failure.ErrorMessageFunc());
         Assert.NotNull(failure.AdditionalData);
@@ -228,10 +228,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a negative minimum length, When WithMinimumLength is called, Then it throws an ArgumentOutOfRangeException.
     [Fact]
-    public void IsLengthInRangeValidator_WithMinimumLength_Throws_when_minimum_length_is_negative()
+    public void LengthValidator_WithMinimumLength_Throws_when_minimum_length_is_negative()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            IsLengthInRangeValidator.WithMinimumLength(-1)
+            LengthValidator.WithMinimumLength(-1)
         );
 
         Assert.Equal("minLength", exception.ParamName);
@@ -240,10 +240,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string meeting the maximum length, When ValidateAsync runs, Then it returns success and the original string.
     [Fact]
-    public async Task IsLengthInRangeValidator_WithMaximumLength_Returns_success_for_values_meeting_the_maximum_length()
+    public async Task LengthValidator_WithMaximumLength_Returns_success_for_values_meeting_the_maximum_length()
     {
         var target = "abc";
-        var sut = IsLengthInRangeValidator.WithMaximumLength(3, ValidationSeverity.Info);
+        var sut = LengthValidator.WithMaximumLength(3, ValidationSeverity.Info);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -257,10 +257,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a string longer than the configured maximum length, When ValidateAsync runs, Then it returns the expected failure.
     [Fact]
-    public async Task IsLengthInRangeValidator_WithMaximumLength_Returns_failure_for_values_longer_than_the_maximum_length()
+    public async Task LengthValidator_WithMaximumLength_Returns_failure_for_values_longer_than_the_maximum_length()
     {
         var target = "abcd";
-        var sut = IsLengthInRangeValidator.WithMaximumLength(3, ValidationSeverity.Warning);
+        var sut = LengthValidator.WithMaximumLength(3, ValidationSeverity.Warning);
 
         var result = await sut.ValidateAsync(new ValidationContext(target), CancellationToken.None);
 
@@ -271,7 +271,7 @@ public sealed class IsLengthInRangeValidatorTests
         Assert.Equal(ValidationSeverity.Warning, result.Severity);
         Assert.Equal(ValidationPath.Root, failure.Path);
         Assert.Equal(ValidationSeverity.Warning, failure.Severity);
-        Assert.Equal(IsLengthInRangeValidator.ErrorCode, failure.ErrorCode);
+        Assert.Equal(LengthValidator.ErrorCode, failure.ErrorCode);
         Assert.Same(target, failure.AttemptedValue);
         Assert.Equal("Must be at most 3 characters long.", failure.ErrorMessageFunc());
         Assert.NotNull(failure.AdditionalData);
@@ -282,10 +282,10 @@ public sealed class IsLengthInRangeValidatorTests
 
     // Scenario: Given a negative maximum length, When WithMaximumLength is called, Then it throws an ArgumentOutOfRangeException.
     [Fact]
-    public void IsLengthInRangeValidator_WithMaximumLength_Throws_when_maximum_length_is_negative()
+    public void LengthValidator_WithMaximumLength_Throws_when_maximum_length_is_negative()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            IsLengthInRangeValidator.WithMaximumLength(-1)
+            LengthValidator.WithMaximumLength(-1)
         );
 
         Assert.Equal("maxLength", exception.ParamName);
