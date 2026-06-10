@@ -146,5 +146,14 @@ namespace Talby.Core.Validation {
                 return ResourceManager.GetString("MatchesRegexMessage", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Must be a valid email address..
+        /// </summary>
+        internal static string EmailAddressValidatorMessage {
+            get {
+                return ResourceManager.GetString("EmailAddressValidatorMessage", resourceCulture);
+            }
+        }
     }
 }

@@ -88,4 +88,7 @@
   <data name="MatchesRegexMessage" xml:space="preserve">
     <value>Must match the required pattern.</value>
   </data>
+  <data name="EmailAddressValidatorMessage" xml:space="preserve">
+    <value>Must be a valid email address.</value>
+  </data>
 </root>
