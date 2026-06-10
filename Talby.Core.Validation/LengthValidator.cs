@@ -1,9 +1,22 @@
 namespace Talby.Core.Validation;
 
+/// <summary>
+/// Validates that a string length falls within a configured range.
+/// </summary>
 public sealed class LengthValidator : ValueValidator<string>
 {
+    /// <summary>
+    /// Gets the error code reported when length validation fails.
+    /// </summary>
     public const string ErrorCode = "Length";
 
+    /// <summary>
+    /// Creates a validator that enforces both minimum and maximum length.
+    /// </summary>
+    /// <param name="minLength">The minimum allowed length.</param>
+    /// <param name="maxLength">The maximum allowed length.</param>
+    /// <param name="severity">The severity reported on failure.</param>
+    /// <returns>A length validator configured for the supplied range.</returns>
     public static LengthValidator WithRange(
         int minLength,
         int maxLength,
@@ -43,6 +56,12 @@ public sealed class LengthValidator : ValueValidator<string>
         };
     }
 
+    /// <summary>
+    /// Creates a validator that enforces a minimum length.
+    /// </summary>
+    /// <param name="minLength">The minimum allowed length.</param>
+    /// <param name="severity">The severity reported on failure.</param>
+    /// <returns>A length validator configured for the supplied minimum.</returns>
     public static LengthValidator WithMinimumLength(
         int minLength,
         ValidationSeverity severity = ValidationSeverity.Error
@@ -66,6 +85,12 @@ public sealed class LengthValidator : ValueValidator<string>
         };
     }
 
+    /// <summary>
+    /// Creates a validator that enforces a maximum length.
+    /// </summary>
+    /// <param name="maxLength">The maximum allowed length.</param>
+    /// <param name="severity">The severity reported on failure.</param>
+    /// <returns>A length validator configured for the supplied maximum.</returns>
     public static LengthValidator WithMaximumLength(
         int maxLength,
         ValidationSeverity severity = ValidationSeverity.Error
@@ -100,7 +125,14 @@ public sealed class LengthValidator : ValueValidator<string>
         this.validatorFunc = validatorFunc;
     }
 
+    /// <summary>
+    /// Gets the minimum allowed length, if configured.
+    /// </summary>
     public int? MinLength { get; }
+
+    /// <summary>
+    /// Gets the maximum allowed length, if configured.
+    /// </summary>
     public int? MaxLength { get; }
 
     private readonly Func<string, ValidationPath, ValidationFailure?> validatorFunc;
@@ -192,6 +224,12 @@ public sealed class LengthValidator : ValueValidator<string>
         };
     }
 
+    /// <summary>
+    /// Validates the supplied string length.
+    /// </summary>
+    /// <param name="context">The validation context being validated.</param>
+    /// <param name="value">The string to validate.</param>
+    /// <returns>The validation result.</returns>
     protected override ValidationResult Validate(IValidationContext context, string value)
     {
         if (validatorFunc(value, context.Path) is { } validationFailure)

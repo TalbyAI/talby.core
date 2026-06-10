@@ -2,12 +2,28 @@ using System.Collections;
 
 namespace Talby.Core.Validation;
 
+/// <summary>
+/// Validates that a value is not empty.
+/// </summary>
+/// <typeparam name="T">The validated value type.</typeparam>
 public sealed class NotEmptyValidator<T> : ValueValidator<T>
 {
+    /// <summary>
+    /// Gets the error code reported when the value is empty.
+    /// </summary>
     public const string ErrorCode = "NotEmpty";
 
+    /// <summary>
+    /// Gets the shared validator instance.
+    /// </summary>
     public static readonly NotEmptyValidator<T> Instance = new();
 
+    /// <summary>
+    /// Validates the supplied value.
+    /// </summary>
+    /// <param name="context">The validation context.</param>
+    /// <param name="value">The value to validate.</param>
+    /// <returns>The validation result.</returns>
     protected override ValidationResult Validate(IValidationContext context, T value)
     {
         if (IsEmpty(value))
@@ -18,6 +34,11 @@ public sealed class NotEmptyValidator<T> : ValueValidator<T>
         return ValidationResult.Success(value);
     }
 
+    /// <summary>
+    /// Validates a null value.
+    /// </summary>
+    /// <param name="context">The validation context.</param>
+    /// <returns>The validation result.</returns>
     protected override ValidationResult ValidateNull(IValidationContext context)
     {
         return ValidationResult.Failures(CreateFailure(context.Path, context.ValidationTarget));
